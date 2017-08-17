@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.vscode/
+*.log
+src_old
+*.old.js
