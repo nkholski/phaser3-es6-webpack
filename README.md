@@ -5,15 +5,7 @@ This is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + We
 
 I did this because I wanted ES6 and live reload. Can't live without it and I wanted to try out Phaser 3. The Phaser 3 example code is a bit of guess work since there are no documentation yet. Be warned, stuff might be broken and Phaser 3 is not ready for production yet. I'll accept any pull requests that seem reasonable, but I'd expect that someone more qualified will step up and create a better Bootstrap project in the months to come making this obselete.
 
-Original documentation follows:
-
-# Phaser + ES6 + Webpack.
-#### A bootstrap project to create games with Phaser + ES6 + Webpack.
-
-![Phaser+ES6+Webpack](https://raw.githubusercontent.com/lean/phaser-es6-webpack/master/assets/images/phaser-es6-webpack.jpg)
-
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
-
+# Slightly modified original documentation follows:
 
 ## Features
 - ESLINT with JavaScript Standard Style configuration
@@ -21,9 +13,6 @@ Original documentation follows:
 - Browsers are automatically updated as you change project files
 - Webpack ready
 - WebFont Loader
-
-## Typescript
-If you need typescript support checkout the ```typescript``` branch. Thanks to @MatsMaker
 
 # Setup
 To use this bootstrap you’ll need to install a few things before you have a working copy of the project.
@@ -71,10 +60,3 @@ Run:
 ```npm run deploy```
 
 This will optimize and minimize the compiled bundle.
-
-## Credits
-Big thanks to this great repos:
-
-https://github.com/belohlavek/phaser-es6-boilerplate
-
-https://github.com/cstuncsik/phaser-es6-demo
