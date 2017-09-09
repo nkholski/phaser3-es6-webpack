@@ -9,7 +9,7 @@ class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('mushroom', './assets/images/mushroom2.png');
+    this.load.spritesheet('player', './assets/images/character.png', {frameWidth: 16, frameHeight: 32});
   }
 
   create(){

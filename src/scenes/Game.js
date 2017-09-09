@@ -1,30 +1,23 @@
-import Mushroom from '../sprites/Mushroom';
+import Player from '../sprites/Player';
 
 class GameScene extends Phaser.Scene {
   constructor () {
     super( { key: 'GameScene' });
+
+    this.player = null;
   }
 
   create(){
-    this.mushroom = new Mushroom({
+    this.player = new Player({
       scene: this,
-      key: 'mushroom',
+      key: 'player',
       x: this.game.config.width/2,
       y: this.game.config.height/2-150,
-    })
-
-    this.tweens.add({
-        targets: this.mushroom,
-        y: this.game.config.height/2+150,
-        duration: 2000,
-        ease: 'Power2',
-        yoyo: true,
-        loop: -1
     });
   }
 
   update(){
-    this.mushroom.update(); // Can't get sprite update method to work!
+    this.player.update();
   }
 }
 
