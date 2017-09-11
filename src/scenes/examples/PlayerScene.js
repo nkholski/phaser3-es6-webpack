@@ -1,8 +1,12 @@
-import Player from '../sprites/Player';
+/*
+  Created by @srobertson421
+*/
 
-class GameScene extends Phaser.Scene {
+import Player from '../../sprites/Player';
+
+class PlayerScene extends Phaser.Scene {
   constructor () {
-    super( { key: 'GameScene' });
+    super( { key: 'PlayerScene' });
 
     this.player = null;
   }
@@ -14,6 +18,8 @@ class GameScene extends Phaser.Scene {
       x: this.game.config.width/2,
       y: this.game.config.height/2-150,
     });
+    this.player.scaleX=10;
+    this.player.scaleY=10;
   }
 
   update(){
@@ -21,4 +27,4 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-export default GameScene;
+export default PlayerScene;

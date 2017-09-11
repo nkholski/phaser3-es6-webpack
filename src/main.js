@@ -1,6 +1,9 @@
 import 'phaser';
 import BootScene from './scenes/Boot';
-import GameScene from './scenes/Game';
+import BootMenu from './scenes/BootMenu';
+import PlayerScene from './scenes/examples/PlayerScene';
+import MushroomScene from './scenes/examples/MushroomScene';
+
 
 let config = {
     type: Phaser.AUTO,
@@ -9,7 +12,9 @@ let config = {
     height: 600,
     scene: [
       BootScene,
-      GameScene
+      BootMenu,
+      MushroomScene,
+      PlayerScene
     ]
 };
 
