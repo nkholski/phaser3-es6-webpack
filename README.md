@@ -5,7 +5,8 @@ This repository is ment as a sandbox for testing out Phaser 3 while it's being d
 
 The repository is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3.
 
-# Slightly modified original Phaser + ES6 + Webpack - documentation follows:
+# Documentation
+This section is a slightly modified version of that found on https://github.com/lean/phaser-es6-webpack.
 
 ## Features
 - ESLINT with JavaScript Standard Style configuration
