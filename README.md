@@ -1,11 +1,11 @@
 # Phaser 3 + ES6 + Webpack
-#### A Phaser 3 Bootstrap project
+#### A Phaser 3 Bootstrap project / Sandbox
 
-This is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3.
+This repository is ment as a sandbox for testing out Phaser 3 while it's being developed. Please make a PR if you create anything to share. Beware that stuff might be broken and Phaser 3 is not ready for production yet. The Phaser 3 example code is a bit of guess work since there are no documentation yet, and does not represent best practises. It might however help you getting started experimenting with Phaser 3. I did this because I wanted ES6 and live reload. Can't live without it and I wanted to try out Phaser 3.
 
-I did this because I wanted ES6 and live reload. Can't live without it and I wanted to try out Phaser 3. The Phaser 3 example code is a bit of guess work since there are no documentation yet. Be warned, stuff might be broken and Phaser 3 is not ready for production yet. I'll accept any pull requests that seem reasonable, but I'd expect that someone more qualified will step up and create a better Bootstrap project in the months to come making this obselete.
+The repository is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3.
 
-# Slightly modified original documentation follows:
+# Slightly modified original Phaser + ES6 + Webpack - documentation follows:
 
 ## Features
 - ESLINT with JavaScript Standard Style configuration
