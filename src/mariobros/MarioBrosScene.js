@@ -24,8 +24,9 @@ class MarioBrosScene extends Phaser.Scene {
 
   create() {
 
-    //this.music = this.game.sound.add('overworld', { loop: true });
-    //this.music.play();
+    this.music = this.sound.add('overworld');
+    this.music.rate = 1.5;
+    this.music.play();
 
     let map = this.make.tilemap({ key: 'map' });
     let tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles');
@@ -65,9 +66,9 @@ class MarioBrosScene extends Phaser.Scene {
     map.renderDebug(debugGraphics);
     debugGraphics.visible = false;
 
-    this.input.events.on('POINTER_DOWN_EVENT', function (event) {
+   /* this.input.events.on('POINTER_DOWN_EVENT', function (event) {
       debugGraphics.visible = !debugGraphics.visible;
-    });
+    });*/
     var config = {
       key: 'runSuper',
       frames: this.anims.generateFrameNumbers('mario', { start: 0, end: 2, first: 0 }),
