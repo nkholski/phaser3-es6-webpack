@@ -9,7 +9,8 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     this.body.maxVelocity.x = 200;
     this.body.width = 4;
     this.animSuffix = "";
-    this.body.setSize(14, 32, -1, 0);
+    this.small();
+
     //console.log("size", this.body.width, this.body.height, this.body);
     this.hasFalled = true;
     this.anims.play('runSuper');
@@ -150,4 +151,14 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       console.log("hurt by", enemy);
     }
   }
+
+  small(){
+    this.body.setSize(10, 10);
+    this.body.offset.set(3,22);
+  }
+  large(){
+    this.body.setSize(10, 22);
+    this.body.offset.set(3,10);
+  }
+
 }

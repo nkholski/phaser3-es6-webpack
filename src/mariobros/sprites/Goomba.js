@@ -20,8 +20,7 @@ export default class Goomba extends Enemy {
       console.log("NOT ALIVE")
       this.body.setVelocityX(0);
       if(this.killAt < delta ){
-        this.alpha = 0;
-        this.alive = false;
+        this.kill();
       }
       return;
     }

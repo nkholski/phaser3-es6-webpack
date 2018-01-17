@@ -20,13 +20,15 @@ class MarioBrosScene extends Phaser.Scene {
       '/assets/mariobros/music/overworld.ogg',
       '/assets/mariobros/music/overworld.mp3'
     ]);
+    this.load.atlas('mario-sprites', '/assets/mariobros/mario-sprites.png', '/assets/mariobros/mario-sprites.json');
+
   }
 
   create() {
 
     this.music = this.sound.add('overworld');
     this.music.rate = 1.5;
-    this.music.play();
+    //this.music.play();
 
     let map = this.make.tilemap({ key: 'map' });
     let tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles');
@@ -34,7 +36,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.updateLoop = [];
 
     this.groundLayer = map.createDynamicLayer('world', tileset, 0, 0);
-
+   // this.groundLayer.alpha=0;
     this.physics.world.bounds.width = this.groundLayer.width;
     let layer = this.groundLayer;
     this.animatedTiles = this.findAnimatedTiles(tileset.tileData, this.groundLayer);
@@ -61,10 +63,7 @@ class MarioBrosScene extends Phaser.Scene {
 
 
 
-    var debugGraphics = this.add.graphics();
-    //debugGraphics.setScale(2);
-    map.renderDebug(debugGraphics);
-    debugGraphics.visible = false;
+ 
 
    /* this.input.events.on('POINTER_DOWN_EVENT', function (event) {
       debugGraphics.visible = !debugGraphics.visible;
@@ -211,8 +210,10 @@ class MarioBrosScene extends Phaser.Scene {
 
       tile.powerUp = properties.powerUp;
       tile.properties.callback = "questionMark";
-      tile.setCollision(true);
-   
+      if(!tile.collide){
+        tile.setCollision(false,false,false,true);
+      }
+      
     }
     );
 
@@ -247,9 +248,12 @@ class MarioBrosScene extends Phaser.Scene {
           }
         );*/
 
+        var debugGraphics = this.add.graphics();
+        //debugGraphics.setScale(2);
+        map.renderDebug(debugGraphics);
+        debugGraphics.visible = false;
 
-
-
+        this.blockEmitter = this.add.particles('mario-sprites');
   }
 
   update(delta) {
@@ -342,7 +346,7 @@ class MarioBrosScene extends Phaser.Scene {
           
           tile.index = 44;
           tile.properties.callback = null;
-
+          tile.setCollision(true); // Invincible blocks are only collidable from above, but everywhere once revealed
           if(!tile.powerUp) {
             return;
           }
@@ -359,6 +363,16 @@ class MarioBrosScene extends Phaser.Scene {
           tile.index = 1;
           tile.properties.callback = null;
           tile.resetCollision();
+          mario.scene.blockEmitter.createEmitter({
+            frame: { frames: ["brick"], cycle: true },
+            x: tile.x+8,
+            y: tile.y,
+            lifespan: 4000,
+            velocityY: -200,
+            scale: 1,
+            frequency: 16
+         });
+
           break;
       }
     }
@@ -373,13 +387,13 @@ class MarioBrosScene extends Phaser.Scene {
     )
   }
 
-  questionMark(tile) {
+/*  questionMark(tile) {
     tile.setId(4);
 
   }
   breakable(tile) {
 
-  }
+  }*/
 
 }
 

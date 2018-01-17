@@ -5,10 +5,11 @@ export default class Turtle extends Enemy {
     super(config);
     this.flipX = true;
     this.anims.play('turtle');
-    this.body.height = 32;
     this.sliding = false;
     this.type = "turtle";
    // return this;
+    this.body.setSize(12, 12);
+    this.body.offset.set(2,20);
   }
 
   update() {
@@ -54,10 +55,12 @@ export default class Turtle extends Enemy {
 
 
     if (enemy.verticalHit(enemy,mario)){
+ 
       if(!enemy.sliding || (enemy.sliding && enemy.body.velocity.x===0)) {
         //enemy.body.height = 16;
-        enemy.direction = 150;
-        enemy.body.velocity.x = 150;
+        enemy.direction = 150 * (mario.x<enemy.x ? 1 : -1);
+  
+        enemy.body.velocity.x = enemy.direction;
         enemy.sliding = true;
         enemy.play("turtleShell");
       }

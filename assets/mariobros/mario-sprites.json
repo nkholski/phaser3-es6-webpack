@@ -1,0 +1,36 @@
+{
+	"frames": {
+		"brick": {
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 9,
+				"h": 5
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 9,
+				"h": 5
+			},
+			"sourceSize": {
+				"w": 9,
+				"h": 5
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "mario-sprites.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 9,
+			"h": 5
+		},
+		"scale": "1",
+		"smartupdate": "$TexturePacker:SmartUpdate:4a41d7d85dc27bd00be7eee5c79fc1b8:134171242e52eaf9ddca85473444745c:4f58bece13d73f4757a743d8358f7b7b$"
+	}
+}

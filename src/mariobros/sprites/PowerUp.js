@@ -56,6 +56,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
   collected(powerUp, mario){
     switch(powerUp.type){
       case "mushroom":
+        mario.large();
         mario.animSuffix = "Super";
         powerUp.alpha = 0;
       break;

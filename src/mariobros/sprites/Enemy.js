@@ -14,6 +14,10 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.alive = true;
     //console.log(this.)
     //return this;
+    this.body.setSize(12, 12);
+    this.body.offset.set(2, 4);
+
+    this.id = Math.random();
   }
 
   activated(){
@@ -33,8 +37,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   verticalHit(enemy, mario){
-        //let verticalHit = Math.abs(enemy.x-mario.x)<Math.abs(enemy.y-mario.y);
-       return (enemy.y-mario.y)>15;
+     return (enemy.body.y)-(mario.body.y)>4;
   }
   hurtMario(enemy, mario){
     // send the enemy to mario hurt method (if mario got a star this will not end well for the enemy)
@@ -49,5 +52,10 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.body.velocity.y = -200;
     this.alive = false;
     this.flipY = true;
+  }
+
+  kill(){
+    this.scene.updateLoop  = this.scene.updateLoop.filter(enemy => enemy !== this);
+    this.destroy();
   }
 }
