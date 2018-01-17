@@ -4,3 +4,4 @@ dist/
 *.log
 src_old
 *.old.js
+phaserTilemapfix
