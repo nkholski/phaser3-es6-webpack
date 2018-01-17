@@ -204,19 +204,37 @@ class MarioBrosScene extends Phaser.Scene {
     map.objects.modifiers.forEach((modifier)=>{
       
       //tile.properties.callback
+      
       let tile = this.groundLayer.getTileAt(modifier.x/16,modifier.y/16-1);
-      let properties = tileset.tileProperties[modifier.gid-1];
+      let properties, type;
+      if(typeof modifier.gid !== "undefined"){
+        properties = tileset.tileProperties[modifier.gid-1];
+        type = properties.type;
+        console.log("modifier!", modifier, modifier.gid, properties)
+        if(properties.hasOwnProperty("powerUp")){
+          type = "powerUp";
+        }
+      }
+      else {
+        type = modifier.properties.type;
+      }
+
       //tile = this.groundLayer.getTileAt(modifier.x, modifier.y);
 
-      tile.powerUp = properties.powerUp;
-      tile.properties.callback = "questionMark";
-      if(!tile.collide){
-        tile.setCollision(false,false,false,true);
+      switch(type){
+        case "powerUp":
+        console.log("powerUp", modifier, properties, type);
+          tile.powerUp = properties.powerUp;
+          tile.properties.callback = "questionMark";
+          if(!tile.collide){
+            tile.setCollision(false,false,false,true);
+         }
+        break;
       }
       
     }
     );
-
+    debugger;
 
     this.keys = {
       jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
@@ -373,6 +391,8 @@ class MarioBrosScene extends Phaser.Scene {
           tile.index = 1;
           tile.properties.callback = null;
           tile.resetCollision();
+          console.log(tile.layer.tilemapLayer.map);
+          tile.layer.tilemapLayer.map.calculateFacesWithin(tile.x-1,tile.y-1,3,3,tile.layer.tilemapLayer);
           mario.scene.blockEmitter.emitParticle(6,tile.x*16,tile.y*16);
           break;
       }
