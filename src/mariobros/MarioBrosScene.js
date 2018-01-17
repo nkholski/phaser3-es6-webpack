@@ -36,7 +36,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.updateLoop = [];
 
     this.groundLayer = map.createDynamicLayer('world', tileset, 0, 0);
-   // this.groundLayer.alpha=0;
+    //this.groundLayer.alpha=0.5;
     this.physics.world.bounds.width = this.groundLayer.width;
     let layer = this.groundLayer;
     this.animatedTiles = this.findAnimatedTiles(tileset.tileData, this.groundLayer);
@@ -254,10 +254,20 @@ class MarioBrosScene extends Phaser.Scene {
         debugGraphics.visible = false;
 
         this.blockEmitter = this.add.particles('mario-sprites');
+        this.blockEmitter.createEmitter({
+          frame: { frames: ["brick"], cycle: true },
+          gravityY: 1000,
+          lifespan: 2000,
+          speed: 400,
+          angle: { min: -90-25, max: -45-25 },
+          frequency: -1,
+       });
+       this.emitted = false;
   }
 
   update(delta) {
-
+    //this.blockEmitter.pause();
+ 
     if (this.mario.physicsCheck) {
       //this.physics.world.collide(this.mario, this.floor);
       if (this.mario.body.velocity.y < 0) {
@@ -363,16 +373,7 @@ class MarioBrosScene extends Phaser.Scene {
           tile.index = 1;
           tile.properties.callback = null;
           tile.resetCollision();
-          mario.scene.blockEmitter.createEmitter({
-            frame: { frames: ["brick"], cycle: true },
-            x: tile.x+8,
-            y: tile.y,
-            lifespan: 4000,
-            velocityY: -200,
-            scale: 1,
-            frequency: 16
-         });
-
+          mario.scene.blockEmitter.emitParticle(6,tile.x*16,tile.y*16);
           break;
       }
     }
