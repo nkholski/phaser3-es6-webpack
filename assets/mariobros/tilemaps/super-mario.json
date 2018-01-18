@@ -21,6 +21,7 @@
         }, 
         {
          "draworder":"topdown",
+         "height":0,
          "name":"modifiers",
          "objects":[
                 {
@@ -208,11 +209,13 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
+         "width":0,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
+         "height":0,
          "name":"enemies",
          "objects":[
                 {
@@ -526,34 +529,11 @@
                  "width":16,
                  "x":3488,
                  "y":64
-                }, 
-                {
-                 "gid":16,
-                 "height":16,
-                 "id":60,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":3472,
-                 "y":160
-                }, 
-                {
-                 "gid":41,
-                 "height":16,
-                 "id":61,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":3472,
-                 "y":160
                 }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
+         "width":0,
          "x":0,
          "y":0
         }],
@@ -568,7 +548,6 @@
      "mapProp":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.0.2",
  "tileheight":16,
  "tilesets":[
         {
@@ -682,7 +661,6 @@
          "tilewidth":16
         }],
  "tilewidth":16,
- "type":"map",
  "version":1,
  "width":231
 }

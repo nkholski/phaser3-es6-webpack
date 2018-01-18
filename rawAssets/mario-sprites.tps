@@ -210,10 +210,80 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">sprites/mario/climb1.png</key>
+            <key type="filename">sprites/mario/climb2.png</key>
+            <key type="filename">sprites/mario/dead.png</key>
+            <key type="filename">sprites/mario/jump.png</key>
+            <key type="filename">sprites/mario/stand.png</key>
+            <key type="filename">sprites/mario/swim1.png</key>
+            <key type="filename">sprites/mario/swim2.png</key>
+            <key type="filename">sprites/mario/swim3.png</key>
+            <key type="filename">sprites/mario/swim4.png</key>
+            <key type="filename">sprites/mario/swim5.png</key>
+            <key type="filename">sprites/mario/turn.png</key>
+            <key type="filename">sprites/mario/walk1.png</key>
+            <key type="filename">sprites/mario/walk2.png</key>
+            <key type="filename">sprites/mario/walk3.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9Paddings</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/mario/climb1Super.png</key>
+            <key type="filename">sprites/mario/climb2Super.png</key>
+            <key type="filename">sprites/mario/duck.png</key>
+            <key type="filename">sprites/mario/fire.png</key>
+            <key type="filename">sprites/mario/half.png</key>
+            <key type="filename">sprites/mario/jumpSuper.png</key>
+            <key type="filename">sprites/mario/standSuper.png</key>
+            <key type="filename">sprites/mario/swimSuper1.png</key>
+            <key type="filename">sprites/mario/swimSuper2.png</key>
+            <key type="filename">sprites/mario/swimSuper3.png</key>
+            <key type="filename">sprites/mario/swimSuper4.png</key>
+            <key type="filename">sprites/mario/swimSuper5.png</key>
+            <key type="filename">sprites/mario/swimSuper6.png</key>
+            <key type="filename">sprites/mario/turnSuper.png</key>
+            <key type="filename">sprites/mario/walk1Super.png</key>
+            <key type="filename">sprites/mario/walk2Super.png</key>
+            <key type="filename">sprites/mario/walk3Super.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,8,8,16</rect>
+                <key>scale9Paddings</key>
+                <rect>4,8,8,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/turtle/shell.png</key>
+            <key type="filename">sprites/turtle/turtle1.png</key>
+            <key type="filename">sprites/turtle/turtle2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,6,8,12</rect>
+                <key>scale9Paddings</key>
+                <rect>4,6,8,12</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>sprites/brick.png</filename>
+            <filename>sprites</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
