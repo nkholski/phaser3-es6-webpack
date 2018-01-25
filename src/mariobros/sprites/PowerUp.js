@@ -3,6 +3,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     super(config.scene, config.x, config.y, config.key);
     config.scene.physics.world.enable(this);
     config.scene.add.existing(this);
+    
     this.width = 16;
     this.height = 16;
     this.type = config.type;
@@ -16,7 +17,18 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     console.log(this.scene.mario.x, config.x)
     this.body.velocity.x = this.direction;
     
-
+    if(this.type === "mushroom"){
+      this.body.velocity.y=-150;
+    }else if(this.type === "coin"){
+      this.body.setVelocity(0,0);
+      this.body.allowGravity = false;
+      this.scene.tweens.add({
+        targets: this,
+        y: this.y-50,
+        duration: 300,
+        onComplete: () => { this.destroy();},
+     });
+    }
 
     this.anims.play(this.type);
     this.tintCnt = 0;
@@ -27,7 +39,7 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
   }
 
   update () {
-    if(this.alpha === 0){
+    if(this.alpha === 0 || this.type === "coin"){
       return;
     }
     this.scene.physics.world.collide(this, this.scene.groundLayer);
@@ -56,9 +68,13 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
   collected(powerUp, mario){
     switch(powerUp.type){
       case "mushroom":
+       
+        powerUp.scene.physics.world.pause();
+ 
         mario.large();
         mario.animSuffix = "Super";
         powerUp.alpha = 0;
+        mario.play("grow");
       break;
       case "star":
         mario.star.active = true;

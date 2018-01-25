@@ -9,7 +9,7 @@ export default class Turtle extends Enemy {
     this.type = "turtle";
    // return this;
     this.body.setSize(12, 12);
-    this.body.offset.set(2,20);
+    this.body.offset.set(2,12);
   }
 
   update() {

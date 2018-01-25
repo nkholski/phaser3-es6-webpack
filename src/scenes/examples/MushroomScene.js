@@ -11,13 +11,13 @@ class MushroomScene extends Phaser.Scene {
     this.mushroom = new Mushroom({
       scene: this,
       key: 'mushroom',
-      x: this.game.config.width / 2,
-      y: this.game.config.height / 2 - 150,
+      x: this.sys.game.config.width / 2,
+      y: this.sys.game.config.height / 2 - 150,
     })
 
     this.tweens.add({
       targets: this.mushroom,
-      y: this.game.config.height / 2 + 150,
+      y: this.sys.game.config.height / 2 + 150,
       duration: 2000,
       ease: 'Power2',
       yoyo: true,

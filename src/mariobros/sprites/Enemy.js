@@ -8,7 +8,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.mario = this.scene.mario; 
     this.direction = -50;
     this.flipX = true;
-    this.scene.updateLoop.push(this);
+    //this.scene.updateLoop.push(this);
     this.body.allowGravity = false;
     this.beenSeen = false;
     this.alive = true;
@@ -25,7 +25,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
       return false;
     }
     if(!this.beenSeen){
-      if(this.x<this.scene.cameras.main.scrollX+this.scene.game.canvas.width+32){
+      if(this.x<this.scene.cameras.main.scrollX+this.scene.sys.game.canvas.width+32){
         this.beenSeen = true;
         this.body.velocity.x = this.direction;
         this.body.allowGravity = true;
@@ -37,8 +37,9 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   verticalHit(enemy, mario){
-     return (enemy.body.y)-(mario.body.y)>4;
+     return (mario.body.y+mario.body.height)-enemy.body.y<4;
   }
+
   hurtMario(enemy, mario){
     // send the enemy to mario hurt method (if mario got a star this will not end well for the enemy)
     this.scene.mario.hurtBy(enemy);
@@ -55,7 +56,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   kill(){
-    this.scene.updateLoop  = this.scene.updateLoop.filter(enemy => enemy !== this);
+    //this.scene.updateLoop  = this.scene.updateLoop.filter(enemy => enemy !== this);
+    this.scene.enemyGroup.remove(this);
     this.destroy();
   }
 }

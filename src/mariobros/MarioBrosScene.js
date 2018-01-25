@@ -2,6 +2,7 @@ import Mario from './sprites/Mario';
 import Goomba from './sprites/Goomba';
 import Turtle from './sprites/Turtle';
 import PowerUp from './sprites/PowerUp';
+import SMBTileSprite from './sprites/SMBTileSprite';
 
 class MarioBrosScene extends Phaser.Scene {
   constructor() {
@@ -11,9 +12,12 @@ class MarioBrosScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('floor', '/assets/mariobros/images/floor.png');
-    this.load.tilemapJSON('map', '/assets/mariobros/tilemaps/super-mario.json');
-    this.load.image('tiles', '/assets/mariobros/images/super-mario.png');
+    this.load.image('background-clouds', '/assets/mariobros/images/clouds.png');
+    this.load.image('background-clouds-16bit', '/assets/mariobros/images/black-clouds.png');
+
+    this.load.tilemapJSON('map', '/assets/mariobros/tilemaps/super-mario.json'); //tilemapTiledJSON
+    //this.load.image('tiles', '/assets/mariobros/images/super-mario.png');
+    this.load.spritesheet('tiles', '/assets/mariobros/images/super-mario.png', { frameWidth: 16, frameHeight: 16 });
     this.load.spritesheet('mario', '/assets/mariobros/images/mario-sprites.png', { frameWidth: 16, frameHeight: 32 });
     this.load.spritesheet('sprites16', '/assets/mariobros/images/16x16sprites.png', { frameWidth: 16, frameHeight: 16 });
     this.load.audio('overworld', [
@@ -25,10 +29,12 @@ class MarioBrosScene extends Phaser.Scene {
   }
 
   create() {
-
+    this.destinations = {};
+    this.rooms = [];
     this.music = this.sound.add('overworld');
     this.music.rate = 1.5;
     //this.music.play();
+    
 
     let map = this.make.tilemap({ key: 'map' });
     let tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles');
@@ -38,6 +44,9 @@ class MarioBrosScene extends Phaser.Scene {
     this.groundLayer = map.createDynamicLayer('world', tileset, 0, 0);
     //this.groundLayer.alpha=0.5;
     this.physics.world.bounds.width = this.groundLayer.width;
+    let tileSprite = this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
+    console.log("tilesprite", tileSprite,tileSprite.frame.source.image);
+    console.log(this);
     let layer = this.groundLayer;
     this.animatedTiles = this.findAnimatedTiles(tileset.tileData, this.groundLayer);
 
@@ -61,13 +70,21 @@ class MarioBrosScene extends Phaser.Scene {
 
     // Add goombas
 
+    console.log("kolla", this.anims.generateFrameNumbers('tiles', { start: 0, end: 2, first: 0 }));
+    var config = {
+      key: 'brickTile',
+      frames: this.anims.generateFrameNumbers('tiles', { start: 14, end: 14, first: 14 })
+    };
+    this.anims.create(config);
+    var config = {
+      key: 'blockTile',
+      frames: this.anims.generateFrameNumbers('tiles', { start: 43, end: 43, first: 43 })
+    };
+    this.anims.create(config);
 
-
- 
-
-   /* this.input.events.on('POINTER_DOWN_EVENT', function (event) {
-      debugGraphics.visible = !debugGraphics.visible;
-    });*/
+    /* this.input.events.on('POINTER_DOWN_EVENT', function (event) {
+       debugGraphics.visible = !debugGraphics.visible;
+     });*/
     var config = {
       key: 'runSuper',
       frames: this.anims.generateFrameNumbers('mario', { start: 0, end: 2, first: 0 }),
@@ -78,7 +95,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.anims.create(config);
     config.key = "run";
     config.frames = this.anims.generateFrameNumbers('mario', { start: 17, end: 19 }),
-    this.anims.create(config);
+      this.anims.create(config);
 
     var config = {
       key: 'jumpSuper',
@@ -87,7 +104,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.anims.create(config);
     config.key = "jump";
     config.frames = this.anims.generateFrameNumbers('mario', { start: 21, end: 21 }),
-    this.anims.create(config);
+      this.anims.create(config);
 
 
     var config = {
@@ -97,7 +114,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.anims.create(config);
     config.key = "stand";
     config.frames = this.anims.generateFrameNumbers('mario', { start: 23, end: 23 }),
-    this.anims.create(config);
+      this.anims.create(config);
 
     var config = {
       key: 'turnSuper',
@@ -107,6 +124,41 @@ class MarioBrosScene extends Phaser.Scene {
     this.anims.create(config);
     config.key = "turn";
     config.frames = this.anims.generateFrameNumbers('mario', { start: 20, end: 20 }),
+      this.anims.create(config);
+
+    config.key = "bendSuper";
+    config.frames = [{ key: "mario-sprites", frame: 'mario/bend' }],
+      this.anims.create(config);
+
+
+    let frames = [];
+    (['mario/half', 'mario/stand', 'mario/half', 'mario/standSuper', 'mario/half', 'mario/standSuper']).forEach(
+      frame => {
+        frames.push({ frame, key: 'mario-sprites' });
+      }
+    );
+
+
+
+
+    config = {
+      key: "grow",
+      frames: frames,
+      frameRate: 10,
+      onComplete: () => { this.physics.world.resume(); },
+      repeat: 0,
+      repeatDelay: 0
+    };
+    this.anims.create(config);
+
+    config = {
+      key: "shrink",
+      frames: frames.reverse(),
+      frameRate: 10,
+      onComplete: () => { console.log('dadas'); this.physics.world.resume(); },
+      repeat: 0,
+      repeatDelay: 0
+    };
     this.anims.create(config);
 
 
@@ -124,9 +176,12 @@ class MarioBrosScene extends Phaser.Scene {
     };
     this.anims.create(config);
 
+
+    console.log(this.anims.generateFrameNames('mario-sprites', { prefix: 'turtle/turtle', end: 1, zeroPad: 0 }));
+
     var config = {
       key: 'turtle',
-      frames: this.anims.generateFrameNumbers('mario', { start: 31, end: 32 }),
+      frames: this.anims.generateFrameNames('mario-sprites', { prefix: 'turtle/turtle', end: 1 }),
       frameRate: 5,
       repeat: -1,
       repeatDelay: 0
@@ -135,7 +190,7 @@ class MarioBrosScene extends Phaser.Scene {
 
     var config = {
       key: 'turtleShell',
-      frames: this.anims.generateFrameNumbers('mario', { start: 33, end: 33 }),
+      frames: [{ frame: 'turtle/shell', key: 'mario-sprites' }],
     };
 
     this.anims.create(config);
@@ -146,6 +201,12 @@ class MarioBrosScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
       repeatDelay: 0
+    };
+    this.anims.create(config);
+
+    var config = {
+      key: 'coin',
+      frames: this.anims.generateFrameNumbers('sprites16', { start: 3, end: 3 }),
     };
     this.anims.create(config);
 
@@ -167,19 +228,25 @@ class MarioBrosScene extends Phaser.Scene {
     };
     this.anims.create(config);
 
+
+    //console.log(this.sys.game);
     this.mario = new Mario({
       scene: this,
       key: 'mario',
-      x: 16*6,
+      x: 16 * 6,
       y: this.game.config.height - 48
-    })
- 
+    });
+//debugger;
+
+    this.enemyGroup = this.add.group();
+
     map.objects.enemies.forEach(
 
       (enemy) => {
+        let enemyObject;
         switch (tileset.tileProperties[enemy.gid - 1].name) {
           case "goomba":
-            new Goomba({
+            enemyObject = new Goomba({
               scene: this,
               key: 'sprites16',
               x: enemy.x,
@@ -187,31 +254,34 @@ class MarioBrosScene extends Phaser.Scene {
             });
             break;
           case "turtle":
-            new Turtle({
+            enemyObject = new Turtle({
               scene: this,
-              key: 'sprites16',
+              key: 'mario-sprites',
               x: enemy.x,
               y: enemy.y
             });
             break;
           default:
-            console.error("Unknown:",tileset.tileProperties[enemy.gid - 1]);
-          break;
+            console.error("Unknown:", tileset.tileProperties[enemy.gid - 1]);
+            break;
         }
+        this.enemyGroup.add(enemyObject);
       }
     );
 
-    map.objects.modifiers.forEach((modifier)=>{
-      
+    console.log(this.enemyGroup);
+
+
+    map.objects.modifiers.forEach((modifier) => {
+
       //tile.properties.callback
-      
-      let tile = this.groundLayer.getTileAt(modifier.x/16,modifier.y/16-1);
+      let tile;
+      //      let tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16 - 1);
       let properties, type;
-      if(typeof modifier.gid !== "undefined"){
-        properties = tileset.tileProperties[modifier.gid-1];
+      if (typeof modifier.gid !== "undefined") {
+        properties = tileset.tileProperties[modifier.gid - 1];
         type = properties.type;
-        console.log("modifier!", modifier, modifier.gid, properties)
-        if(properties.hasOwnProperty("powerUp")){
+        if (properties.hasOwnProperty("powerUp")) {
           type = "powerUp";
         }
       }
@@ -221,31 +291,43 @@ class MarioBrosScene extends Phaser.Scene {
 
       //tile = this.groundLayer.getTileAt(modifier.x, modifier.y);
 
-      switch(type){
+      switch (type) {
         case "powerUp":
-        console.log("powerUp", modifier, properties, type);
+          //  console.log("powerUp", modifier, properties, type);
+          tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16 - 1);
           tile.powerUp = properties.powerUp;
           tile.properties.callback = "questionMark";
-          if(!tile.collide){
-            tile.setCollision(false,false,false,true);
-         }
-        break;
+          if (!tile.collides) {
+
+            tile.setCollision(false, false, false, true);
+          }
+          break;
+        case "pipe":
+          tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16);
+          tile.properties.dest = parseInt(modifier.properties.goto);
+          break;
+        case "dest":
+          console.log("found dest", modifier);
+          this.destinations[modifier.properties.id] = { x: modifier.x + modifier.width / 2, top: (modifier.y < 16) };
+          break;
+        case "room":
+          this.rooms.push({ x: modifier.x, width: modifier.width, sky: modifier.properties.sky });
+          break;
       }
-      
+
     }
     );
-    debugger;
 
     this.keys = {
       jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
       left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-      right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
-
+      right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+      down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
     };
 
     //let static1 = this.physics.add.staticImage(300, 150, 'floor');
 
-   // this.floor = [static1, this.groudLayer, map];
+    // this.floor = [static1, this.groudLayer, map];
     this.map = map;
     let cam = this.cameras.main;
     cam.setBounds(0, 0, layer.width * layer.scaleX, layer.height * layer.scaleY);
@@ -253,6 +335,8 @@ class MarioBrosScene extends Phaser.Scene {
     // cam.scrollY = player.y - cam.height * 0.5;
 
     this.cameras.main.startFollow(this.mario);
+    this.cameras.main.setBackgroundColor('#6888ff'); //#6888ff
+
     //    this.minimap.startFollow(this.mario);
 
     /*    this.input.keyboard.events.on('KEY_DOWN_EVENT', (event) => {
@@ -266,29 +350,42 @@ class MarioBrosScene extends Phaser.Scene {
           }
         );*/
 
-        var debugGraphics = this.add.graphics();
-        //debugGraphics.setScale(2);
-        map.renderDebug(debugGraphics);
-        debugGraphics.visible = false;
+    var debugGraphics = this.add.graphics();
+    //debugGraphics.setScale(2);
+    map.renderDebug(debugGraphics);
+    debugGraphics.visible = false;
 
-        this.blockEmitter = this.add.particles('mario-sprites');
-        this.blockEmitter.createEmitter({
-          frame: { frames: ["brick"], cycle: true },
-          gravityY: 1000,
-          lifespan: 2000,
-          speed: 400,
-          angle: { min: -90-25, max: -45-25 },
-          frequency: -1,
-       });
-       this.emitted = false;
+    this.blockEmitter = this.add.particles('mario-sprites');
+    this.blockEmitter.createEmitter({
+      frame: { frames: ["brick"], cycle: true },
+      gravityY: 1000,
+      lifespan: 2000,
+      speed: 400,
+      angle: { min: -90 - 25, max: -45 - 25 },
+      frequency: -1,
+    });
+    this.emitted = false;
+
+    //    this.physics.pause();
+
+    //    debugger;
+    this.bounceTile = new SMBTileSprite({
+      scene: this,
+    })
+
   }
 
   update(delta) {
     //this.blockEmitter.pause();
- 
+
+    if (this.physics.world.isPaused) {
+      return;
+    }
+
+
     if (this.mario.physicsCheck) {
       //this.physics.world.collide(this.mario, this.floor);
-      if (this.mario.body.velocity.y < 0) {
+      if (this.mario.body.velocity.y < 0 || this.mario.bending) {
         this.physics.world.collide(this.mario, this.groundLayer, this.callback);
       }
       else {
@@ -297,12 +394,19 @@ class MarioBrosScene extends Phaser.Scene {
       //this.physics.world.collide(this.mario, this.map);
     }
     //    this.physics.world.collide(this.mario, this.groundLayer,this.callback);
+    this.mario.update(this.keys, delta);
 
+    this.enemyGroup.children.entries.forEach(
+      (sprite) => { sprite.update(delta); }
+    )
     this.updateLoop.forEach(
       (sprite) => { sprite.update(delta); }
     )
-
-    this.mario.update(this.keys, delta);
+    /*    if(this.physics.world.isPaused){
+          console.log(this.mario);
+         // debugger;
+          return;
+        }*/
     let cam = this.cameras.main;
 
     Object.keys(this.animatedTiles).forEach(
@@ -348,7 +452,7 @@ class MarioBrosScene extends Phaser.Scene {
         if (tileData[key].hasOwnProperty("animation")) {
           animatedTiles[key] = { frames: [] };
           tileData[key].animation.forEach((frame) => { frame.tileid++; animatedTiles[key].frames.push(frame) });
-      
+
           animatedTiles[key].next = animatedTiles[key].frames[0].duration;
           animatedTiles[key].currentFrame = 0;
 
@@ -360,40 +464,90 @@ class MarioBrosScene extends Phaser.Scene {
   }
 
   callback(mario, tile) {
-    if(mario.type === "turtle"){
-      if(tile.y>Math.round(mario.y/16)){
+    if (mario.type === "turtle") {
+      if (tile.y > Math.round(mario.y / 16)) {
         return;
+      }
+
+    } else if (mario.bending && tile.properties.pipe) {
+      if (tile.properties.pipe > 0) {
+        mario.enterPipe(tile.properties.dest, tile.rotation);
+      }
+      //      console.log("CHECKING GROUND:");
+      //    console.log(tile.properties);
+    }
+
+    if (mario.bending) {
+      let canBreak = false;
+      let diff = mario.body.x + mario.body.width - tile.x * 16; // Mario höger mot Tile höger minst 4 och mindre än 12
+      if (diff > 4 && diff < 12) {
+        canBreak = true;
+      }
+      diff = (tile.x + 1) * 16 - mario.body.x;
+      if (diff > 4 && diff < 12) {
+        canBreak = true;
       }
 
     }
 
+    if (mario.type !== "turtle" && mario.body.velocity.y >= 0) {
+      //  return;
+
+    }
+
+    if (mario.type !== "turtle") {
+      let canBreak = false;
+      let diff = mario.body.x + mario.body.width - tile.x * 16; // Mario höger mot Tile höger minst 4 och mindre än 12
+      if (diff > 2 && diff < 14) {
+        canBreak = true;
+      }
+      diff = (tile.x + 1) * 16 - mario.body.x;
+      if (diff > 2 && diff < 14) {
+        canBreak = true;
+      }
+      if (!canBreak) {
+        return;
+      }
+    }
+
+
+
+
+    // Mario vänstra hörn (x) ska vara 4 pixlar in tile.x*16+16
+    // Marui högra hörn (x+widh) 4 pixlar in.tile.x
+
+
     if (tile.properties.callback) {
-      
+
       switch (tile.properties.callback) {
         case "questionMark":
-          
           tile.index = 44;
+          mario.scene.bounceTile.restart(tile);
           tile.properties.callback = null;
           tile.setCollision(true); // Invincible blocks are only collidable from above, but everywhere once revealed
-          if(!tile.powerUp) {
-            return;
-          }
+          let powerUp = tile.powerUp ? tile.powerUp : "coin"; 
+         
           new PowerUp(
             {
               scene: mario.scene,
               key: 'sprites16',
               x: tile.x * 16 + 8,
               y: tile.y * 16 - 8,
-              type: tile.powerUp
+              type: powerUp 
             });
           break;
         case "breakable":
-          tile.index = 1;
-          tile.properties.callback = null;
-          tile.resetCollision();
-          console.log(tile.layer.tilemapLayer.map);
-          tile.layer.tilemapLayer.map.calculateFacesWithin(tile.x-1,tile.y-1,3,3,tile.layer.tilemapLayer);
-          mario.scene.blockEmitter.emitParticle(6,tile.x*16,tile.y*16);
+          if (mario.animSuffix === "") {
+            mario.scene.bounceTile.restart(tile);
+          }
+          else {
+            tile.index = 1;
+            tile.properties.callback = null;
+            tile.resetCollision();
+            console.log(tile.layer.tilemapLayer.map);
+            tile.layer.tilemapLayer.map.calculateFacesWithin(tile.x - 1, tile.y - 1, 3, 3, tile.layer.tilemapLayer);
+            mario.scene.blockEmitter.emitParticle(6, tile.x * 16, tile.y * 16);
+          }
           break;
       }
     }
@@ -408,13 +562,13 @@ class MarioBrosScene extends Phaser.Scene {
     )
   }
 
-/*  questionMark(tile) {
-    tile.setId(4);
-
-  }
-  breakable(tile) {
-
-  }*/
+  /*  questionMark(tile) {
+      tile.setId(4);
+  
+    }
+    breakable(tile) {
+  
+    }*/
 
 }
 

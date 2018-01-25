@@ -10,7 +10,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     this.body.width = 4;
     this.animSuffix = "";
     this.small();
-
+    this.bending = false;
     //console.log("size", this.body.width, this.body.height, this.body);
     this.hasFalled = true;
     this.anims.play('runSuper');
@@ -21,11 +21,15 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       timer: -1,
       step: 0
     }
-    return this;
+    this.enteringPipe = false;
   }
 
   update(keys, delta) {
     this.alpha = 1;
+    this.bending = false;
+    if(this.enteringPipe){
+      return;      
+    }
 
     if (this.wasHurt === 1) {
       this.wasHurt = delta + 2000;
@@ -52,14 +56,13 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     }
 
 
-    if (this.body.velocity.y < 0) {
-      console.log(this.body.acceleration.y);
-    }
     //this.angle++
     //  console.log(this.body.velocity.y);
     if (this.body.velocity.y > 0) {
       this.hasFalled = true;
     }
+
+
 
 
     if (keys.left.isDown) {
@@ -89,6 +92,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       this.run(-this.body.velocity.x * 2);
 
 
+
     }
     else if (!this.body.blocked.down) {
       this.run(0);
@@ -98,6 +102,8 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       this.jump();
     }
 
+
+
     let anim = null;
     if (this.body.velocity.y !== 0) {
       anim = "jump"
@@ -106,15 +112,25 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       if ((keys.right.isDown || keys.left.isDown) && ((this.body.velocity.x > 0 && this.body.acceleration.x < 0) || (this.body.velocity.x < 0 && this.body.acceleration.x > 0))) {
         anim = "turn";
       }
+      else if (this.animSuffix != "" && keys.down.isDown && !(keys.right.isDown || keys.left.isDown)) {
+        anim = "bend";
+      }
     }
     else {
       anim = "stand";
+      if (this.animSuffix != "" && keys.down.isDown && !(keys.right.isDown || keys.left.isDown)) {
+        anim = "bend";
+      }
     }
+
     anim += this.animSuffix;
     if (this.anims.currentAnim.key !== anim) {
       this.anims.play(anim);
     }
 
+    if(keys.down.isDown && this.body.velocity.x < 100){
+      this.bending = true;
+    }
 
     this.physicsCheck = true;
 
@@ -148,17 +164,68 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     }
     else {
       this.wasHurt = 1;
-      console.log("hurt by", enemy);
     }
   }
 
-  small(){
+  small() {
     this.body.setSize(10, 10);
-    this.body.offset.set(3,22);
+    this.body.offset.set(3, 22);
   }
-  large(){
+  large() {
     this.body.setSize(10, 22);
-    this.body.offset.set(3,10);
+    this.body.offset.set(3, 10);
   }
+
+  enterPipe(id, dir, init = true){
+
+    if(init){
+      if(this.animSuffix === ""){
+        this.play("stand");
+      }
+      else {
+        this.play("bend"+this.animSuffix);
+      }
+
+      this.enteringPipe = true;
+      this.body.setVelocity(0);
+      this.body.setAcceleration(0);
+      this.setDepth(-1000);
+      this.scene.tweens.add({
+        targets: this,
+        y: this.y+40,
+        duration: 500,
+        onComplete: function () { console.log(this.targets,id,dir); console.log(id); console.log(dir); this.targets[0].enterPipe(id, dir, false); 
+        },
+     });
+
+    }
+  else {
+    this.scene.cameras.main.setBackgroundColor(this.scene.destinations[id].sky);
+    this.setDepth(1);
+    this.enteringPipe = false;
+    this.x = this.scene.destinations[id].x;
+    this.y = this.scene.destinations[id].top ? -100 : 100;
+    this.scene.rooms.forEach(
+      (room) => {
+        if(this.x>=room.x && this.x<=(room.x+room.width)){
+          let cam = this.scene.cameras.main;
+          let layer = this.scene.groundLayer;
+          cam.setBounds(room.x, 0, room.width * layer.scaleX, layer.height * layer.scaleY);
+        }
+
+      }
+
+
+
+    );
+  }    
+
+
+ /*   console.log(this.scene.destinations);
+    console.log("KANSE: ",this.scene.destinations[id]);
+     */
+  }
+
+  
 
 }
