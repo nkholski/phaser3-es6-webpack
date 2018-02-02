@@ -10,3 +10,4 @@ phaserTilemapfix
 *.wav
 legacy*
 *.txt
+dump/
