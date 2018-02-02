@@ -3,7 +3,7 @@
 
 This repository started as a sandbox for testing out Phaser 3 while it was in Beta bundeled with a few examples. These examples are now removed and replaced with a generic platformer project that explores Phaser 3 API. With the example project removed this is still a good boiler plate to start with. The aim of the platformer is not to relase a game but to try stuff out and to share something for others to learn from. I usually think the best way to learn is to read and manipulate source code. A quick disclaimer though, even if my aim is to identify best practises that's far from where the source code is today. I don't use pools. I do define at least one global function. Etc etc.
 
-![Running example](https://cdn.rawgit.com/nkholski/phaser3-es6-webpack/9a4148a3/rawAssets/smb-phaser3.gif)
+![Running example](https://github.com/nkholski/phaser3-es6-webpack/raw/master/rawAssets/smb-phaser3.gif)
 
 The boiler plate code is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3. If (or when) Lean releases a Phaser 3 version on their own I'll probably shift to use that and focus on the generic platformer.
 
