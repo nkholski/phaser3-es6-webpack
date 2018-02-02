@@ -141,10 +141,4 @@ export default function makeAnimations(scene) {
         frames: scene.anims.generateFrameNumbers('sprites16', { start: 1, end: 1 }),
     };
     scene.anims.create(config);
-
-    config = {
-        key: 'coin',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 3, end: 3 }),
-    };
-    scene.anims.create(config);
 }

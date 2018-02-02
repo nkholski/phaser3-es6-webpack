@@ -89,9 +89,12 @@ class MarioBrosScene extends Phaser.Scene {
 
     // The map has one object layer with enemies as stamped tiles, 
     // each tile has properties containing info on what enemy it represents.
-    map.objects.enemies.forEach(
+  
+    // Was map.objects.enemies.forEach
+    map.objects[1].objects.forEach(
       (enemy) => {
         let enemyObject;
+        console.log(enemy.gid);
         switch (tileset.tileProperties[enemy.gid - 1].name) {
           case "goomba":
             enemyObject = new Goomba({
@@ -121,7 +124,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.powerUps = this.add.group();
 
     // The map has an object layer with "modifiers" that do "stuff", see below
-    map.objects.modifiers.forEach((modifier) => {
+    map.objects[0].objects.forEach((modifier) => {
       let tile, properties, type;
       // Get property stuff from the tile if present or just from the object layer directly
       if (typeof modifier.gid !== "undefined") {
@@ -308,12 +311,7 @@ class MarioBrosScene extends Phaser.Scene {
             sprite.scene.sound.playAudioSprite('sfx', 'Bump');
           }
           else {
-            // TODO: Remove instead of changing index.
-            tile.index = 1;
-            tile.properties.callback = null;
-            tile.resetCollision();
-            console.log(tile.layer.tilemapLayer.map);
-            tile.layer.tilemapLayer.map.calculateFacesWithin(tile.x - 1, tile.y - 1, 3, 3, tile.layer.tilemapLayer);
+            sprite.scene.map.removeTileAt(tile.x, tile.y, true, true, this.groundLayer);
             sprite.scene.sound.playAudioSprite('sfx', 'Break');
             sprite.scene.blockEmitter.emitParticle(6, tile.x * 16, tile.y * 16);
           }

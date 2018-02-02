@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .vscode/
+.idea
 *.log
 src_old
 *.old.js
@@ -12,3 +13,4 @@ legacy*
 *.txt
 dump/
 *.docx
+*.patch

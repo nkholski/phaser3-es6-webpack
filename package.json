@@ -25,10 +25,11 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "expose-loader": "^0.7.3",
+    "raw-loader": "^0.5.1",
     "webpack": "^3.4.1"
   },
   "dependencies": {
-    "phaser": "3.0.0-beta.19",
+    "phaser": "3.0.0-beta.20",
     "webfontloader": "^1.6.28"
   }
 }
