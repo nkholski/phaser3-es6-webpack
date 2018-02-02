@@ -11,7 +11,7 @@ The boiler plate code is based on the excellent Bootstrap project for Phaser 2 "
 
 # Contribute
 Please any submit issues you have, including proposals. Ask me before preparing a PR or your PR might be rejected if in conflict with other ideas and planned way to do stuff. This would be great:
-- **Update the boilerplate part of the repository. I have problems with post Phaser Beta 20 with the current version, and deploy isn't working**
+- **Make deploy working**
 - Cut a perfect loop of the theme music
 - Extend the sprites texture atlas from the spritesheets I still use so I can dump them
 - Improve volume on sound effects (ask me for wavs)
@@ -23,6 +23,9 @@ Sprites
 Arcade physics
 Animation
 Audio
+
+#Thanks to
+@AleBles - Updated webpack-stuff when the project was stalled at Beta 19.
 
 # Setup
 You’ll need to install a few things before you have a working copy of the project.
