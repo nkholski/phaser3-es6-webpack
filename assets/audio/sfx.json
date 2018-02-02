@@ -1,0 +1,120 @@
+{
+  "resources": [
+    "output.ogg",
+    "output.m4a",
+    "output.mp3",
+    "output.ac3"
+  ],
+  "spritemap": {
+    "1up": {
+      "start": 0,
+      "end": 4,
+      "loop": false
+    },
+    "Beep": {
+      "start": 5,
+      "end": 7,
+      "loop": false
+    },
+    "Big Jump": {
+      "start": 8,
+      "end": 9,
+      "loop": false
+    },
+    "Bowser Die": {
+      "start": 10,
+      "end": 12,
+      "loop": false
+    },
+    "Break": {
+      "start": 13,
+      "end": 15,
+      "loop": false
+    },
+    "Bump": {
+      "start": 16,
+      "end": 18,
+      "loop": false
+    },
+    "Coin": {
+      "start": 19,
+      "end": 21,
+      "loop": false
+    },
+    "Die": {
+      "start": 22,
+      "end": 27,
+      "loop": false
+    },
+    "Enemy Fire": {
+      "start": 28,
+      "end": 31,
+      "loop": false
+    },
+    "Fire Ball": {
+      "start": 32,
+      "end": 34,
+      "loop": false
+    },
+    "Flagpole": {
+      "start": 35,
+      "end": 37,
+      "loop": false
+    },
+    "Game Over": {
+      "start": 38,
+      "end": 41,
+      "loop": false
+    },
+    "Item": {
+      "start": 42,
+      "end": 45,
+      "loop": false
+    },
+    "Jump": {
+      "start": 46,
+      "end": 48,
+      "loop": false
+    },
+    "Kick": {
+      "start": 49,
+      "end": 50,
+      "loop": false
+    },
+    "Pause": {
+      "start": 51,
+      "end": 54,
+      "loop": false
+    },
+    "Powerup": {
+      "start": 55,
+      "end": 57,
+      "loop": false
+    },
+    "Skid": {
+      "start": 58,
+      "end": 59,
+      "loop": false
+    },
+    "Squish": {
+      "start": 60,
+      "end": 62,
+      "loop": false
+    },
+    "Thwomp": {
+      "start": 63,
+      "end": 66,
+      "loop": false
+    },
+    "Warp": {
+      "start": 67,
+      "end": 69,
+      "loop": false
+    },
+    "Vine": {
+      "start": 70,
+      "end": 72,
+      "loop": false
+    }
+  }
+}

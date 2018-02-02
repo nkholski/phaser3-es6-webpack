@@ -1,25 +1,29 @@
-# Phaser 3 + ES6 + Webpack
-#### A Phaser 3 Bootstrap project / Sandbox
+# Generic Platformer and Phaser Bootstrap Project
+#### Phaser 3 + ES6 + Webpack
 
-This repository is ment as a sandbox for testing out Phaser 3 while it's being developed. Please make a PR if you create anything to share. Beware that stuff might be broken and Phaser 3 is not ready for production yet. The Phaser 3 example code is a bit of guess work since there are no documentation yet, and does not represent best practises. It might however help you getting started experimenting with Phaser 3. I did this because I wanted ES6 and live reload. Can't live without it and I wanted to try out Phaser 3.
+This repository started as a sandbox for testing out Phaser 3 while it was in Beta bundeled with a few examples. These examples are now removed and replaced with a generic platformer project that explores Phaser 3 API. With the example project removed this is still a good boiler plate to start with. The aim of the platformer is not to relase a game but to try stuff out and to share something for others to learn from. I usually think the best way to learn is to read and manipulate source code. A quick disclaimer though, even if my aim is to identify best practises that's far from where the source code is today. I don't use pools. I do define at least one global function. Etc etc.
 
-The repository is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3.
+The boiler plate code is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3. If (or when) Lean releases a Phaser 3 version on their own I'll probably shift to use that and focus on the generic platformer.
 
-# Built with Phaser 3 + ES6 + Webpack
-Square Touch made by @Raicuparta: https://github.com/Raicuparta/square-touch
+**Disclaimer**: The generic platformer isn't an atempt to recreate any copyrighted game, and it will not become a playable game. You get nothing out of this besides learning about Phaser 3.
 
-# Documentation
-This section is a slightly modified version of that found on https://github.com/lean/phaser-es6-webpack.
+# Contribute
+Please any submit issues you have, including proposals. Ask me before preparing a PR or your PR might be rejected if in conflict with other ideas and planned way to do stuff. This would be great:
+- **Update the boilerplate part of the repository. I have problems with post Phaser Beta 20 with the current version, and deploy isn't working**
+- Cut a perfect loop of the theme music
+- Extend the sprites texture atlas from the spritesheets I still use so I can dump them
+- Improve volume on sound effects (ask me for wavs)
 
-## Features
-- ESLINT with JavaScript Standard Style configuration
-- Next generation of Javascript
-- Browsers are automatically updated as you change project files
-- Webpack ready
-- WebFont Loader
+# Parts of API used:
+TODO: Go through the soruce and make a list of what parts of the API I use.
+Tilemaps
+Sprites
+Arcade physics
+Animation
+Audio
 
 # Setup
-To use this bootstrap you’ll need to install a few things before you have a working copy of the project.
+You’ll need to install a few things before you have a working copy of the project.
 
 ## 1. Clone this repo:
 

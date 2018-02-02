@@ -5,3 +5,8 @@ dist/
 src_old
 *.old.js
 phaserTilemapfix
+*.zip
+*.xcf
+*.wav
+legacy*
+*.txt

@@ -1,9 +1,5 @@
 import 'phaser';
-import BootScene from './scenes/Boot';
-import BootMenu from './scenes/BootMenu';
-import PlayerScene from './scenes/examples/PlayerScene';
-import MushroomScene from './scenes/examples/MushroomScene';
-import MarioBrosScene from './mariobros/MarioBrosScene';
+import MarioBrosScene from './MarioBrosScene';
 
 
 let config = {
@@ -16,14 +12,10 @@ let config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 800 },
-            debug: true
+            debug: false
         }
     },
     scene: [
-      BootScene,
-      BootMenu,
-      MushroomScene,
-      PlayerScene,
       MarioBrosScene
     ]
 };
