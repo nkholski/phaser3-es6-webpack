@@ -11,7 +11,6 @@ export default class SMBTileSprite extends Phaser.GameObjects.Sprite {
   }
 
   update() {
-    console.log("CHECK TILE COLLISION!"); 
     //this.scene.physics.world.collide(this, this.scene.enemyGroup, ()=>{console.log("COLLIDED!")});
     this.scene.enemyGroup.children.entries.forEach(enemy => {
       this.scene.physics.world.overlap(this, enemy, ()=>{enemy.starKilled()});
@@ -29,7 +28,6 @@ export default class SMBTileSprite extends Phaser.GameObjects.Sprite {
     this.tile.alpha = 0;
     this.alpha = 1;
     // tile
-    console.log("tile",tile.index);
     if(tile.index === 44){
       anim = "blockTile";
     }

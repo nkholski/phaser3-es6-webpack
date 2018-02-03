@@ -36,6 +36,9 @@ class MarioBrosScene extends Phaser.Scene {
     ], 'assets/audio/sfx.json', {
         instances: 4
       });
+
+    this.load.bitmapFont('font', 'assets/fonts/font.png', 'assets/fonts/font.fnt');
+
   }
 
   create() {
@@ -43,39 +46,34 @@ class MarioBrosScene extends Phaser.Scene {
     this.destinations = {};
     // Array of rooms to keep bounds within to avoid the need of multiple tilemaps per level.
     this.rooms = [];
-    // TODO: Shift to group
-    //this.updateLoop = [];
+    // Running in 8-bit mode
+    this.eightBit = true;
 
     // Add and play the music
     this.music = this.sound.add('overworld');
-    //this.music.rate = 1.5; <-- this will be used when time is short
-    this.music.play();
+    this.music.play({loop: true});
 
     // Define all animations we'll use
     makeAnimations(this);
 
-    // Add the map
-    let map = this.make.tilemap({ key: 'map' });
-    this.map = map;
-    let tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles');
+    // Add the map 
+    this.map = this.make.tilemap({ key: 'map' }); 
+    this.tileset = this.map.addTilesetImage('SuperMarioBros-World1-1', 'tiles');
+  
     // Dynamic layer because we want breakable and animated tiles
-    this.groundLayer = map.createDynamicLayer('world', tileset, 0, 0);
+    this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
     // Probably not the correct way of doing this:
     this.physics.world.bounds.width = this.groundLayer.width;
 
     // Custom method to initialize animated tiles. I'll improve this and make it into a plugin.
-    this.animatedTiles = this.findAnimatedTiles(tileset.tileData, this.groundLayer);
+    this.animatedTiles = this.findAnimatedTiles(this.tileset.tileData, this.groundLayer);
 
-    // Add the background as an tilesprite and send it to the back! 
+    // Add the background as an tilesprite. TODO: Not working since beta 20
     let tileSprite = this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
 
-    // TODO: Just set collision by property and using native API
-    map.setCollision(11);
-    map.setCollisionBetween(14, 16);
-    map.setCollision([20, 21, 22, 23, 24, 25, 27, 28, 29, 33, 39, 40]);
-    map.setCollision(40);
-    this.setCollisionByProperty(map);
-
+    // TODO: Just set collision by property, and shift to the native API that now supports this
+    this.setCollisionByProperty(this.map);
+    // Not yet working: this.groundLayer.setCollisionByProperty({ collides: true });
     // CREATE MARIO!!!
     this.mario = new Mario({
       scene: this,
@@ -89,13 +87,10 @@ class MarioBrosScene extends Phaser.Scene {
 
     // The map has one object layer with enemies as stamped tiles, 
     // each tile has properties containing info on what enemy it represents.
-  
-    // Was map.objects.enemies.forEach
-    map.objects[1].objects.forEach(
+    this.map.getObjectLayer("enemies").objects.forEach(
       (enemy) => {
         let enemyObject;
-        console.log(enemy.gid);
-        switch (tileset.tileProperties[enemy.gid - 1].name) {
+        switch (this.tileset.tileProperties[enemy.gid - 1].name) {
           case "goomba":
             enemyObject = new Goomba({
               scene: this,
@@ -113,7 +108,7 @@ class MarioBrosScene extends Phaser.Scene {
             });
             break;
           default:
-            console.error("Unknown:", tileset.tileProperties[enemy.gid - 1]);
+            console.error("Unknown:", this.tileset.tileProperties[enemy.gid - 1]);
             break;
         }
         this.enemyGroup.add(enemyObject);
@@ -124,11 +119,11 @@ class MarioBrosScene extends Phaser.Scene {
     this.powerUps = this.add.group();
 
     // The map has an object layer with "modifiers" that do "stuff", see below
-    map.objects[0].objects.forEach((modifier) => {
+    this.map.getObjectLayer("modifiers").objects.forEach((modifier) => {
       let tile, properties, type;
       // Get property stuff from the tile if present or just from the object layer directly
       if (typeof modifier.gid !== "undefined") {
-        properties = tileset.tileProperties[modifier.gid - 1];
+        properties = this.tileset.tileProperties[modifier.gid - 1];
         type = properties.type;
         if (properties.hasOwnProperty("powerUp")) {
           type = "powerUp";
@@ -198,11 +193,25 @@ class MarioBrosScene extends Phaser.Scene {
       scene: this,
     })
 
-    // This works:
-    //tileset.setImage(this.sys.textures.get('tiles-16bit'));
-
     // Hack to get sprite's destroy method to function.
     this.sys.physicsManager = this.physics.world;
+
+
+    let hud = this.add.bitmapText(5*8, 8, 'font', "MARIO                      TIME", 8);
+    hud.setScrollFactor(0,0);
+    this.levelTimer = {
+      textObject: this.add.bitmapText(36*8, 16, 'font', "255", 8),
+      time: 150*1000,
+      displayedTime: 255,
+      hurry: false
+    }
+    this.levelTimer.textObject.setScrollFactor(0,0);
+    this.score = {
+      pts: 0,
+      textObject: this.add.bitmapText(5*8, 16, 'font', "000000", 8)
+    }
+    this.score.textObject.setScrollFactor(0,0);
+
 
   }
 
@@ -211,6 +220,33 @@ class MarioBrosScene extends Phaser.Scene {
     if (this.physics.world.isPaused) {
       return;
     }
+    this.levelTimer.time-=delta*2;
+    if(this.levelTimer.time - this.levelTimer.displayedTime*1000<1000){
+      this.levelTimer.displayedTime = Math.round(this.levelTimer.time / 1000);
+      this.levelTimer.textObject.setText((""+this.levelTimer.displayedTime).padStart(3,"0"));
+      if(this.levelTimer.displayedTime<50 && !this.levelTimer.hurry){
+        this.levelTimer.hurry = true;
+        this.music.pause();
+        let sound = this.sound.addAudioSprite('sfx');
+        sound.on('ended', (sound)=>{
+          this.music.seek = 0; 
+          this.music.rate = 1.5; 
+          this.music.resume();
+          sound.destroy();
+        });
+        sound.play('Time Warning');
+      }
+      if(this.levelTimer.displayedTime<1){
+        this.mario.die();
+        this.levelTimer.hurry = false;
+        this.music.rate = 1;
+        this.levelTimer.time = 150*1000;
+        this.levelTimer.displayedTime = 255;
+      }
+    }
+
+
+
     // Run the update method of Mario
     this.mario.update(this.keys, time, delta);
 
@@ -311,11 +347,22 @@ class MarioBrosScene extends Phaser.Scene {
             sprite.scene.sound.playAudioSprite('sfx', 'Bump');
           }
           else {
+            // get points
+            sprite.scene.updateScore(50);
             sprite.scene.map.removeTileAt(tile.x, tile.y, true, true, this.groundLayer);
             sprite.scene.sound.playAudioSprite('sfx', 'Break');
             sprite.scene.blockEmitter.emitParticle(6, tile.x * 16, tile.y * 16);
           }
           break;
+        case "toggle16bit":
+            sprite.scene.eightBit = !sprite.scene.eightBit;
+            if(sprite.scene.eightBit){
+              sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles'));
+            }
+            else {
+              sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles-16bit'));
+            }
+            break;
         default:
           sprite.scene.sound.playAudioSprite('sfx', 'Bump');
           break;
@@ -330,6 +377,11 @@ class MarioBrosScene extends Phaser.Scene {
         map.setCollision(parseInt(id) + 1);
       }
     )
+  }
+
+  updateScore(score) {
+    this.score.pts+=score;
+    this.score.textObject.setText((""+this.score.pts).padStart(6,"0"));
   }
 
 }

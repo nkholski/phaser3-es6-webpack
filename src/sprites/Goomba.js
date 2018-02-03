@@ -36,6 +36,8 @@ export default class Goomba extends Enemy {
       mario.enemyBounce();
       enemy.scene.sound.playAudioSprite('sfx', 'Squish');
       enemy.getFlat(enemy, mario);
+      // get points
+      enemy.scene.updateScore(100);
     }
     else {
       // Mario collides with the enemy

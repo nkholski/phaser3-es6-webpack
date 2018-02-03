@@ -1,5 +1,8 @@
 var path = require('path')
 var webpack = require('webpack')
+var CleanWebpackPlugin = require('clean-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 // Phaser webpack config
 var phaserModule = path.join(__dirname, '/node_modules/phaser/')
@@ -19,12 +22,13 @@ module.exports = {
 
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: './dist/',
-    filename: 'bundle.js'
+    path: path.resolve(__dirname, 'build'),
+    publicPath: './',
+    filename: 'dist/bundle.js'
   },
   plugins: [
     definePlugin,
+    new CleanWebpackPlugin(['build']),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new webpack.optimize.UglifyJsPlugin({
       drop_console: true,
@@ -33,7 +37,27 @@ module.exports = {
         comments: false
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */})
+    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' /* chunkName= */ , filename: 'dist/vendor.bundle.js' /* filename= */ }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html', // path.resolve(__dirname, 'build', 'index.html'),
+      template: './index.html',
+      chunks: ['vendor', 'app'],
+      chunksSortMode: 'manual',
+      minify: {
+        removeAttributeQuotes: true,
+        collapseWhitespace: true,
+        html5: true,
+        minifyCSS: true,
+        minifyJS: true,
+        minifyURLs: true,
+        removeComments: true,
+        removeEmptyAttributes: true
+      },
+      hash: true
+    }),
+    new CopyWebpackPlugin([
+      { from: 'assets', to: 'assets' }
+    ])
   ],
   module: {
     rules: [
@@ -49,7 +73,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'phaser': phaser,
+      'phaser': phaser
     }
   }
 }

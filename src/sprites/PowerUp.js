@@ -101,6 +101,8 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
         powerUp.scene.sound.playAudioSprite('sfx', '1up');
         break;
     }
+    // get points
+    powerUp.scene.updateScore(1000);
     powerUp.alpha = 0;
     
 

@@ -24,7 +24,7 @@ Arcade physics
 Animation
 Audio
 
-#Thanks to
+# Thanks to
 @AleBles - Updated webpack-stuff when the project was stalled at Beta 19.
 
 # Setup

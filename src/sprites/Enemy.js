@@ -65,7 +65,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.alive = false;
     this.flipY = true;
     this.scene.sound.playAudioSprite('sfx', 'Squish');
-
+    this.scene.updateScore(100);
   }
 
   kill(){
