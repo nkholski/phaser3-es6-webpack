@@ -1,6 +1,0 @@
-import { ADDRGETNETWORKPARAMS } from "dns";
-
-1. collide up, down, left, right -> top, bottom
-2. tile.offset
-3. Glider ADDRGETNETWORKPARAMS
-4. debug-bodies below everything
