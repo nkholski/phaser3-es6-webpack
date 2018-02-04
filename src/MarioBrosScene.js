@@ -238,7 +238,7 @@ class MarioBrosScene extends Phaser.Scene {
       return;
     }
 
-    if (this.mario.x > this.finishLine.x) {
+    if (this.mario.x > this.finishLine.x && this.finishLine.active) {
       this.removeFlag();
       this.physics.world.pause();
       return;

@@ -72,7 +72,7 @@ export default class Turtle extends Enemy {
         enemy.sliding = true;
         enemy.play("turtleShell");
       }
-      mario.enemyBounce();
+      mario.enemyBounce(enemy);
     }
     else {
       if (enemy.sliding && enemy.body.velocity.x === 0) {

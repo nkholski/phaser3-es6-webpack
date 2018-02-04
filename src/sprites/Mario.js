@@ -188,10 +188,13 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
   }
 
-  enemyBounce() {
-
+  enemyBounce(enemy) {
+    // Force Mario y-position up a bit (on top of the enemy) to avoid getting killed 
+    // by neigbouring enemy before being able to bounce
+    this.body.y = enemy.body.y-this.body.height;
+    // TODO: if jump-key is down, add a boost value to jump-velocity to use and init jump for controls to handle.
     this.body.setVelocityY(-150);
-
+    
   }
 
   hurtBy(enemy) {
@@ -288,7 +291,6 @@ export default class Mario extends Phaser.GameObjects.Sprite {
           let layer = this.scene.groundLayer;
           cam.setBounds(room.x, 0, room.width * layer.scaleX, layer.height * layer.scaleY);
           this.scene.finishLine.active = (room.x===0);
-          console.log("finisli", this.scene.finishLine);
           this.scene.cameras.main.setBackgroundColor(room.sky);
           return;
         }
