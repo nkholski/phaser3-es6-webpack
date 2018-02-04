@@ -272,21 +272,28 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
     }
     else {
-      this.scene.cameras.main.setBackgroundColor(this.scene.destinations[id].sky);
       this.setDepth(1);
       this.enteringPipe = false;
       this.x = this.scene.destinations[id].x;
       this.y = this.scene.destinations[id].top ? -100 : 100;
-      this.scene.rooms.forEach(
-        (room) => {
-          if (this.x >= room.x && this.x <= (room.x + room.width)) {
-            let cam = this.scene.cameras.main;
-            let layer = this.scene.groundLayer;
-            cam.setBounds(room.x, 0, room.width * layer.scaleX, layer.height * layer.scaleY);
-          }
-        }
-      );
+      this.setRoomBounds(this.scene.rooms);
     }
+  }
+
+  setRoomBounds(rooms){
+    rooms.forEach(
+      (room) => {
+        if (this.x >= room.x && this.x <= (room.x + room.width)) {
+          let cam = this.scene.cameras.main;
+          let layer = this.scene.groundLayer;
+          cam.setBounds(room.x, 0, room.width * layer.scaleX, layer.height * layer.scaleY);
+          this.scene.finishLine.active = (room.x===0);
+          console.log("finisli", this.scene.finishLine);
+          this.scene.cameras.main.setBackgroundColor(room.sky);
+          return;
+        }
+      }
+    );
   }
 
 

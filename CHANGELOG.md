@@ -1,5 +1,9 @@
 ## Kind of a changelog
 
+#### 2018-02-04
+- Added a flag in the end of the level
+- Fixed volume for sound effects
+
 #### 2018-02-03
 - HUD: Score and Time.
 - Hurry up music.

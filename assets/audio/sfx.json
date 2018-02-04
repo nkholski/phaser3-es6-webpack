@@ -81,44 +81,59 @@
       "end": 50,
       "loop": false
     },
-    "Pause": {
+    "output2": {
       "start": 51,
+      "end": 52,
+      "loop": false
+    },
+    "output3": {
+      "start": 53,
       "end": 54,
       "loop": false
     },
-    "Powerup": {
+    "output": {
       "start": 55,
-      "end": 57,
+      "end": 56,
+      "loop": false
+    },
+    "Pause": {
+      "start": 57,
+      "end": 60,
+      "loop": false
+    },
+    "Powerup": {
+      "start": 61,
+      "end": 63,
       "loop": false
     },
     "Skid": {
-      "start": 58,
-      "end": 59,
+      "start": 64,
+      "end": 65,
       "loop": false
     },
     "Squish": {
-      "start": 60,
-      "end": 62,
+      "start": 66,
+      "end": 68,
       "loop": false
     },
     "Thwomp": {
-      "start": 63,
-      "end": 66,
+      "start": 69,
+      "end": 72,
       "loop": false
     },
     "Time Warning": {
-      "start": 67,
-      "end": 69.93138321995465,
+      "start": 73,
+      "end": 75.93138321995465,
       "loop": false
     },
     "Warp": {
-      "start": 71,
-      "end": 73,
+      "start": 77,
+      "end": 79,
       "loop": false
     },
     "Vine": {
-      "start": 74,
-      "end": 76,
+      "start": 80,
+      "end": 82,
       "loop": false
     }
   }

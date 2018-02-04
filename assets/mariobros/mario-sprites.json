@@ -25,7 +25,7 @@
 	"sourceSize": {"w":16,"h":32}
 },
 {
-	"filename": "mario/climb0",
+	"filename": "mario/climb1",
 	"frame": {"x":0,"y":53,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
@@ -33,23 +33,23 @@
 	"sourceSize": {"w":16,"h":16}
 },
 {
-	"filename": "mario/climb1",
-	"frame": {"x":0,"y":69,"w":16,"h":16},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-	"sourceSize": {"w":16,"h":16}
-},
-{
-	"filename": "mario/climbSuper0",
-	"frame": {"x":0,"y":85,"w":16,"h":32},
+	"filename": "mario/climb1Super",
+	"frame": {"x":0,"y":69,"w":16,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":32},
 	"sourceSize": {"w":16,"h":32}
 },
 {
-	"filename": "mario/climbSuper1",
+	"filename": "mario/climb2",
+	"frame": {"x":0,"y":101,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+{
+	"filename": "mario/climbSuper2",
 	"frame": {"x":0,"y":117,"w":16,"h":32},
 	"rotated": false,
 	"trimmed": false,
@@ -295,6 +295,6 @@
 	"format": "RGBA8888",
 	"size": {"w":16,"h":861},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:89646b929be7f342ab0aa95ac4916ae8:fe5db8aa679fab48f664e36a494f7f91:4f58bece13d73f4757a743d8358f7b7b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:f00a8ecbf2d04d70deec0a95f716e8cb:da7c41ddc8a557435ce0a49db46952be:4f58bece13d73f4757a743d8358f7b7b$"
 }
 }

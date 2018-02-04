@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>4.3.1</string>
+        <string>4.6.1</string>
         <key>fileName</key>
         <string>/home/niklas/Projekt/smb/rawAssets/mario-sprites.tps</string>
         <key>autoSDSettings</key>
@@ -36,7 +36,7 @@
         <key>dataFormat</key>
         <string>phaser-json-array</string>
         <key>textureFileName</key>
-        <filename></filename>
+        <filename>../assets/mario-sprites.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -150,7 +150,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../assets/mariobros/mario-sprites.json</filename>
+                <filename>../assets/mario-sprites.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -172,6 +172,8 @@
         <true/>
         <key>prependSmartFolderName</key>
         <false/>
+        <key>autodetectAnimations</key>
+        <true/>
         <key>globalSpriteSettings</key>
         <struct type="SpriteSettings">
             <key>scale</key>
@@ -210,6 +212,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">sprites/flag.png</key>
             <key type="filename">sprites/mario/climb1.png</key>
             <key type="filename">sprites/mario/climb2.png</key>
             <key type="filename">sprites/mario/dead.png</key>
@@ -236,9 +239,9 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">sprites/mario/bend.png</key>
             <key type="filename">sprites/mario/climb1Super.png</key>
-            <key type="filename">sprites/mario/climb2Super.png</key>
-            <key type="filename">sprites/mario/duck.png</key>
+            <key type="filename">sprites/mario/climbSuper2.png</key>
             <key type="filename">sprites/mario/fire.png</key>
             <key type="filename">sprites/mario/half.png</key>
             <key type="filename">sprites/mario/jumpSuper.png</key>
@@ -250,9 +253,9 @@
             <key type="filename">sprites/mario/swimSuper5.png</key>
             <key type="filename">sprites/mario/swimSuper6.png</key>
             <key type="filename">sprites/mario/turnSuper.png</key>
-            <key type="filename">sprites/mario/walk1Super.png</key>
-            <key type="filename">sprites/mario/walk2Super.png</key>
-            <key type="filename">sprites/mario/walk3Super.png</key>
+            <key type="filename">sprites/mario/walkSuper1.png</key>
+            <key type="filename">sprites/mario/walkSuper2.png</key>
+            <key type="filename">sprites/mario/walkSuper3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -266,8 +269,8 @@
                 <false/>
             </struct>
             <key type="filename">sprites/turtle/shell.png</key>
+            <key type="filename">sprites/turtle/turtle0.png</key>
             <key type="filename">sprites/turtle/turtle1.png</key>
-            <key type="filename">sprites/turtle/turtle2.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

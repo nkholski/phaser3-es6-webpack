@@ -51,15 +51,15 @@ class MarioBrosScene extends Phaser.Scene {
 
     // Add and play the music
     this.music = this.sound.add('overworld');
-    this.music.play({loop: true});
+    this.music.play({ loop: true });
 
     // Define all animations we'll use
     makeAnimations(this);
 
     // Add the map 
-    this.map = this.make.tilemap({ key: 'map' }); 
+    this.map = this.make.tilemap({ key: 'map' });
     this.tileset = this.map.addTilesetImage('SuperMarioBros-World1-1', 'tiles');
-  
+
     // Dynamic layer because we want breakable and animated tiles
     this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
     // Probably not the correct way of doing this:
@@ -71,9 +71,9 @@ class MarioBrosScene extends Phaser.Scene {
     // Add the background as an tilesprite. TODO: Not working since beta 20
     let tileSprite = this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
 
-    // TODO: Just set collision by property, and shift to the native API that now supports this
-    this.setCollisionByProperty(this.map);
-    // Not yet working: this.groundLayer.setCollisionByProperty({ collides: true });
+    // Set collision by property
+    this.groundLayer.setCollisionByProperty({ collide: true });
+
     // CREATE MARIO!!!
     this.mario = new Mario({
       scene: this,
@@ -174,7 +174,7 @@ class MarioBrosScene extends Phaser.Scene {
 
     this.cameras.main.setBounds(0, 0, this.groundLayer.width * this.groundLayer.scaleX, this.groundLayer.height * this.groundLayer.scaleY);
     this.cameras.main.startFollow(this.mario);
-    this.cameras.main.setBackgroundColor('#6888ff'); //Blue sky
+    //this.cameras.main.setBackgroundColor('#6888ff'); //Blue sky
 
     // An emitter for bricks when blocks are destroyed.
     this.blockEmitter = this.add.particles('mario-sprites');
@@ -197,22 +197,39 @@ class MarioBrosScene extends Phaser.Scene {
     this.sys.physicsManager = this.physics.world;
 
 
-    let hud = this.add.bitmapText(5*8, 8, 'font', "MARIO                      TIME", 8);
-    hud.setScrollFactor(0,0);
+    let hud = this.add.bitmapText(5 * 8, 8, 'font', "MARIO                      TIME", 8);
+    hud.setScrollFactor(0, 0);
     this.levelTimer = {
-      textObject: this.add.bitmapText(36*8, 16, 'font', "255", 8),
-      time: 150*1000,
+      textObject: this.add.bitmapText(36 * 8, 16, 'font', "255", 8),
+      time: 150 * 1000,
       displayedTime: 255,
       hurry: false
     }
-    this.levelTimer.textObject.setScrollFactor(0,0);
+    this.levelTimer.textObject.setScrollFactor(0, 0);
     this.score = {
       pts: 0,
-      textObject: this.add.bitmapText(5*8, 16, 'font', "000000", 8)
+      textObject: this.add.bitmapText(5 * 8, 16, 'font', "000000", 8)
     }
-    this.score.textObject.setScrollFactor(0,0);
+    this.score.textObject.setScrollFactor(0, 0);
 
+    // Prepare the finishLine
+    let worldEndAt = -1;
+    for (let x = 0; x < this.groundLayer.width; x++) {
+      let tile = this.groundLayer.getTileAt(x, 2);
+      if (tile && tile.properties.worldsEnd) {
+        worldEndAt = tile.pixelX;
+        break;
+      }
+    }
+    this.finishLine = {
+      x: worldEndAt,
+      flag: this.add.sprite(worldEndAt + 8, 4 * 16),
+      active: false
+    }
+    this.finishLine.flag.play("flag");
 
+    // Set bounds for current room
+    this.mario.setRoomBounds(this.rooms);
   }
 
   update(time, delta) {
@@ -220,27 +237,34 @@ class MarioBrosScene extends Phaser.Scene {
     if (this.physics.world.isPaused) {
       return;
     }
-    this.levelTimer.time-=delta*2;
-    if(this.levelTimer.time - this.levelTimer.displayedTime*1000<1000){
+
+    if (this.mario.x > this.finishLine.x) {
+      this.removeFlag();
+      this.physics.world.pause();
+      return;
+    }
+
+    this.levelTimer.time -= delta * 2;
+    if (this.levelTimer.time - this.levelTimer.displayedTime * 1000 < 1000) {
       this.levelTimer.displayedTime = Math.round(this.levelTimer.time / 1000);
-      this.levelTimer.textObject.setText((""+this.levelTimer.displayedTime).padStart(3,"0"));
-      if(this.levelTimer.displayedTime<50 && !this.levelTimer.hurry){
+      this.levelTimer.textObject.setText(("" + this.levelTimer.displayedTime).padStart(3, "0"));
+      if (this.levelTimer.displayedTime < 50 && !this.levelTimer.hurry) {
         this.levelTimer.hurry = true;
         this.music.pause();
         let sound = this.sound.addAudioSprite('sfx');
-        sound.on('ended', (sound)=>{
-          this.music.seek = 0; 
-          this.music.rate = 1.5; 
+        sound.on('ended', (sound) => {
+          this.music.seek = 0;
+          this.music.rate = 1.5;
           this.music.resume();
           sound.destroy();
         });
         sound.play('Time Warning');
       }
-      if(this.levelTimer.displayedTime<1){
+      if (this.levelTimer.displayedTime < 1) {
         this.mario.die();
         this.levelTimer.hurry = false;
         this.music.rate = 1;
-        this.levelTimer.time = 150*1000;
+        this.levelTimer.time = 150 * 1000;
         this.levelTimer.displayedTime = 255;
       }
     }
@@ -304,7 +328,7 @@ class MarioBrosScene extends Phaser.Scene {
         // Turtles ignore the ground
         return;
       }
-    } else if (sprite.type === "mario"){
+    } else if (sprite.type === "mario") {
       // Mario is bending on a pipe that leads somewhere:
       if (sprite.bending && tile.properties.pipe && tile.properties.dest) {
         sprite.enterPipe(tile.properties.dest, tile.rotation);
@@ -312,7 +336,7 @@ class MarioBrosScene extends Phaser.Scene {
     }
     // If it's Mario and the body isn't blocked up it can't hit question marks or break bricks
     // Otherwise Mario will break bricks he touch from the side while moving up.
-    if(sprite.type==="mario" && !sprite.body.blocked.up){
+    if (sprite.type === "mario" && !sprite.body.blocked.up) {
       return;
     }
 
@@ -355,14 +379,14 @@ class MarioBrosScene extends Phaser.Scene {
           }
           break;
         case "toggle16bit":
-            sprite.scene.eightBit = !sprite.scene.eightBit;
-            if(sprite.scene.eightBit){
-              sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles'));
-            }
-            else {
-              sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles-16bit'));
-            }
-            break;
+          sprite.scene.eightBit = !sprite.scene.eightBit;
+          if (sprite.scene.eightBit) {
+            sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles'));
+          }
+          else {
+            sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles-16bit'));
+          }
+          break;
         default:
           sprite.scene.sound.playAudioSprite('sfx', 'Bump');
           break;
@@ -371,17 +395,64 @@ class MarioBrosScene extends Phaser.Scene {
     }
   }
 
-  setCollisionByProperty(map) {
+  /** To be removed, supported natively now:
+   * setCollisionByProperty(map) {
     Object.keys(map.tilesets[0].tileProperties).forEach(
       (id) => {
-        map.setCollision(parseInt(id) + 1);
+
+        if (map.tilesets[0].tileProperties[id].collide) {
+          map.setCollision(parseInt(id) + 1);
+        }
       }
     )
-  }
+  }*/
 
   updateScore(score) {
-    this.score.pts+=score;
-    this.score.textObject.setText((""+this.score.pts).padStart(6,"0"));
+    this.score.pts += score;
+    this.score.textObject.setText(("" + this.score.pts).padStart(6, "0"));
+  }
+
+  removeFlag(step = 0) {
+    switch (step) {
+      case 0:
+        this.music.stop();
+        this.sound.playAudioSprite('sfx', 'Flagpole');
+        this.mario.play("mario/climb" + this.mario.animSuffix);
+        this.mario.x = this.finishLine.x - 1;
+        this.tweens.add({
+          targets: this.finishLine.flag,
+          y: 240 - 6 * 8,
+          duration: 1500,
+          onComplete: () => this.removeFlag(1)
+        });
+        this.tweens.add({
+          targets: this.mario,
+          y: 240 - 3 * 16,
+          duration: 1000,
+          onComplete: () => { this.mario.flipX = true; this.mario.x += 11; }
+        });
+        break;
+      case 1:
+
+        this.mario.play("run" + this.mario.animSuffix);
+
+        this.mario.flipX = false;
+        this.tweens.add({
+          targets: this.mario,
+          x: this.finishLine.x + 6 * 16,
+          duration: 1000,
+          onComplete: () => this.removeFlag(2)
+        });
+        break;
+      case 2:
+        this.tweens.add({
+          targets: this.mario,
+          alpha: 0,
+          duration: 500,
+          onComplete: () => alert("END")
+        });
+        break;
+    }
   }
 
 }

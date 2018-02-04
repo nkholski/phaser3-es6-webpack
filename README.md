@@ -12,9 +12,7 @@ The boiler plate code is based on the excellent Bootstrap project for Phaser 2 "
 # Contribute
 Please any submit issues you have, including proposals. Ask me before preparing a PR or your PR might be rejected if in conflict with other ideas and planned way to do stuff. This would be great:
 - **Make deploy working**
-- Cut a perfect loop of the theme music
 - Extend the sprites texture atlas from the spritesheets I still use so I can dump them
-- Improve volume on sound effects (ask me for wavs)
 
 # Parts of API used:
 TODO: Go through the soruce and make a list of what parts of the API I use.

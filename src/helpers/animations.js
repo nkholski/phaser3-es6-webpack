@@ -10,6 +10,9 @@ export default function makeAnimations(scene) {
         key: 'blockTile',
         frames: scene.anims.generateFrameNumbers('tiles', { start: 43, end: 43, first: 43 })
     };
+
+
+    
     scene.anims.create(config);
     config = {
         key: 'runSuper',
@@ -105,6 +108,31 @@ export default function makeAnimations(scene) {
         frameRate: 5,
         repeat: -1,
         repeatDelay: 0
+    };
+
+    scene.anims.create(config);
+    config = {
+        key: 'mario/climb',
+        frames: scene.anims.generateFrameNames('mario-sprites', { prefix: 'mario/climb', end: 1 }),
+        frameRate: 5,
+        repeat: -1,
+        repeatDelay: 0
+    };
+    scene.anims.create(config);
+    config = {
+        key: 'mario/climbSuper',
+        frames: scene.anims.generateFrameNames('mario-sprites', { prefix: 'mario/climbSuper', end: 1 }),
+        frameRate: 5,
+        repeat: -1,
+        repeatDelay: 0
+    };
+
+    scene.anims.create(config);
+
+    config = {
+        key: 'flag',
+        frames: [{ key: "mario-sprites", frame: 'flag' }],
+        repeat: -1,
     };
     scene.anims.create(config);
 
