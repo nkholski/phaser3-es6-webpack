@@ -39,9 +39,16 @@ class MarioBrosScene extends Phaser.Scene {
 
     this.load.bitmapFont('font', 'assets/fonts/font.png', 'assets/fonts/font.fnt');
 
+    // Load plugin for animated tiles. This is just a first build of an upcoming plugin.
+    // It's not optimized and lack features. The source code will be released when an
+    // official first version is released.
+    this.load.plugin('AnimatedTiles', '/assets/plugins/AnimatedTiles.js');
   }
 
   create() {
+    // Install AnimatedTiles plugin to allow to use it
+    this.sys.install('AnimatedTiles');
+
     // Places to warp to (from pipes)
     this.destinations = {};
     // Array of rooms to keep bounds within to avoid the need of multiple tilemaps per level.
@@ -53,7 +60,7 @@ class MarioBrosScene extends Phaser.Scene {
     this.music = this.sound.add('overworld');
     this.music.play({ loop: true });
 
-    // Define all animations we'll use
+    // Define all sprite animations we'll use
     makeAnimations(this);
 
     // Add the map 
@@ -62,11 +69,13 @@ class MarioBrosScene extends Phaser.Scene {
 
     // Dynamic layer because we want breakable and animated tiles
     this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
+
+    // We got the map. Tell animated tiles plugin to loop through the tileset properties and get ready.
+    // We don't need to do anything beyond this point for animated tiles to work.
+    this.sys.animatedTiles.init(this.map);
+
     // Probably not the correct way of doing this:
     this.physics.world.bounds.width = this.groundLayer.width;
-
-    // Custom method to initialize animated tiles. I'll improve this and make it into a plugin.
-    this.animatedTiles = this.findAnimatedTiles(this.tileset.tileData, this.groundLayer);
 
     // Add the background as an tilesprite. TODO: Not working since beta 20
     let tileSprite = this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
@@ -282,43 +291,6 @@ class MarioBrosScene extends Phaser.Scene {
     this.powerUps.children.entries.forEach(
       (sprite) => { sprite.update(time, delta); }
     )
-
-    // Animate tiles. This is just for a quick test and not very sophisticated. 
-    // I'm working on a plugin.
-    Object.keys(this.animatedTiles).forEach(
-      (key) => {
-        let speed = 1;
-        let animatedTile = this.animatedTiles[key];
-        animatedTile.next -= delta * speed;
-        if (animatedTile.next < 0) {
-          let currentIndex = animatedTile.currentFrame;
-          let newIndex = currentIndex + 1;
-          if (newIndex > (animatedTile.frames.length - 1)) {
-            newIndex = 0;
-          }
-          animatedTile.next = animatedTile.frames[newIndex].duration;
-          animatedTile.currentFrame = newIndex;
-          this.map.replaceByIndex(animatedTile.frames[currentIndex].tileid, animatedTile.frames[newIndex].tileid);
-        }
-      }
-    );
-  }
-
-  findAnimatedTiles(tileData) {
-    // poor choice, should have been an array, but I'll abandon this later when I have my plugin anyway
-    let animatedTiles = {};
-    Object.keys(tileData).forEach(
-      (key) => {
-        if (tileData[key].hasOwnProperty("animation")) {
-          animatedTiles[key] = { frames: [] };
-          tileData[key].animation.forEach((frame) => { frame.tileid++; animatedTiles[key].frames.push(frame) });
-          animatedTiles[key].next = animatedTiles[key].frames[0].duration;
-          animatedTiles[key].currentFrame = 0;
-
-        }
-      }
-    )
-    return animatedTiles;
   }
 
   tileCollision(sprite, tile) {
