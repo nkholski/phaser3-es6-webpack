@@ -5,6 +5,8 @@ This repository started as a sandbox for testing out Phaser 3 while it was in Be
 
 ![Running example](https://github.com/nkholski/phaser3-es6-webpack/raw/master/rawAssets/smb-phaser3.gif)
 
+**Live demo:** http://metroid.niklasberg.se/phaser3platformer/
+
 The boiler plate code is based on the excellent Bootstrap project for Phaser 2 "Phaser + ES6 + Webpack" (https://github.com/lean/phaser-es6-webpack), which was based on https://github.com/belohlavek/phaser-es6-boilerplate and https://github.com/cstuncsik/phaser-es6-demo. Most of this project is an exact copy of that repository, only with the Phaser package updated to Phaser 3 and the example replaced with one based on Phaser 3. If (or when) Lean releases a Phaser 3 version on their own I'll probably shift to use that and focus on the generic platformer.
 
 **Disclaimer**: The generic platformer isn't an atempt to recreate any copyrighted game, and it will not become a playable game. You get nothing out of this besides learning about Phaser 3.
