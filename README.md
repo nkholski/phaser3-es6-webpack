@@ -11,7 +11,7 @@ The boiler plate code is based on the excellent Bootstrap project for Phaser 2 "
 
 # Contribute
 Please any submit issues you have, including proposals. Ask me before preparing a PR or your PR might be rejected if in conflict with other ideas and planned way to do stuff. This would be great:
-- **Make deploy working**
+- Feedback on best practises and why I'm being stupid
 - Extend the sprites texture atlas from the spritesheets I still use so I can dump them
 
 # Parts of API used:
