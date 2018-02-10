@@ -27,9 +27,13 @@ export default class Mario extends Phaser.GameObjects.Sprite {
   update(keys, time, delta) {
 
     // If Mario falls down a cliff or died, just let him drop from the sky and prentend like nothing happened
-    
+
+
     if (this.y > 2040) {
       this.y = -32;
+      if(this.x<16){
+        this.x = 16;
+      }
       this.alive = true;
       this.scene.music.seek = 0;
       this.scene.music.play();
@@ -172,12 +176,14 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       return;
     }
 
+  if(!this.jumping){
     if(this.animSuffix===""){
-      this.scene.sound.playAudioSprite('sfx', 'Jump');
+      this.scene.sound.playAudioSprite('sfx', 'smb_jump-small');
     }
     else {
-      this.scene.sound.playAudioSprite('sfx', 'Big Jump');
+      this.scene.sound.playAudioSprite('sfx', 'smb_jump-super');
     }
+  }
     if(this.body.velocity.y<0 || this.body.blocked.down){
     this.body.setVelocityY(-200);
     }
@@ -207,6 +213,8 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     else if (this.wasHurt < 1) {
       if (this.animSuffix !== "") {
         this.resize(false);
+        this.scene.sound.playAudioSprite('sfx', 'smb_pipe');
+
         this.wasHurt = 2000;
       }
       else {
@@ -242,7 +250,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     // Called when killed by enemy or TODO: Timeup
     this.scene.music.pause(); 
     this.play("death");
-    this.scene.sound.playAudioSprite('sfx', 'Die');
+    this.scene.sound.playAudioSprite('sfx', 'smb_mariodie');
 
     this.body.setAcceleration(0);
     this.body.setVelocity(0, -300);
@@ -258,7 +266,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       else {
         this.play("bend" + this.animSuffix);
       }
-      this.scene.sound.playAudioSprite('sfx', 'Warp');
+      this.scene.sound.playAudioSprite('sfx', 'smb_pipe');
 
       this.enteringPipe = true;
       this.body.setVelocity(0);

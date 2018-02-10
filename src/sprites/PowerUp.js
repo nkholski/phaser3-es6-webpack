@@ -35,11 +35,11 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     this.tintIndex = 0;
 
     if(this.type === "coin"){
-      this.scene.sound.playAudioSprite('sfx', 'Coin');
+      this.scene.sound.playAudioSprite('sfx', 'smb_coin');
 
     }
     else {
-      this.scene.sound.playAudioSprite('sfx', 'Item');
+      this.scene.sound.playAudioSprite('sfx', 'smb_powerup_appears');
       this.scene.powerUps.add(this);
 
 
@@ -90,15 +90,15 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
          // Powerup will not be removed until next loop after physics is running again
          // (physics is paused by mario.resize), until then we'll just hide it.
         mario.resize(true);
-        powerUp.scene.sound.playAudioSprite('sfx', 'Powerup');
+        powerUp.scene.sound.playAudioSprite('sfx', 'smb_powerup');
         break;
       case "star":
         mario.star.active = true;
         mario.star.timer = 10000;
-        powerUp.scene.sound.playAudioSprite('sfx', 'Powerup');
+        powerUp.scene.sound.playAudioSprite('sfx', 'smb_powerup');
         break;
       case "1up":
-        powerUp.scene.sound.playAudioSprite('sfx', '1up');
+        powerUp.scene.sound.playAudioSprite('sfx', 'smb_1-up');
         break;
     }
     // get points

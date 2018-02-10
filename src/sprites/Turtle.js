@@ -57,8 +57,8 @@ export default class Turtle extends Enemy {
     if (enemy.verticalHit(enemy, mario)) {
       // get points
       enemy.scene.updateScore(100);
-      enemy.scene.sound.playAudioSprite('sfx', 'Squish');
       if (!enemy.sliding || (enemy.sliding && enemy.body.velocity.x === 0)) {
+        enemy.scene.sound.playAudioSprite('sfx', 'smb_kick');
         //enemy.body.height = 16;
         enemy.direction = 150 * (mario.x < enemy.x ? 1 : -1);
 
@@ -67,6 +67,8 @@ export default class Turtle extends Enemy {
         enemy.play("turtleShell");
       }
       else {
+        enemy.scene.sound.playAudioSprite('sfx', 'smb_stomp');
+
         enemy.direction = 0;
         enemy.body.velocity.x = 0;
         enemy.sliding = true;
@@ -76,6 +78,8 @@ export default class Turtle extends Enemy {
     }
     else {
       if (enemy.sliding && enemy.body.velocity.x === 0) {
+        enemy.scene.sound.playAudioSprite('sfx', 'smb_kick');
+
         enemy.direction = 150;
         enemy.body.velocity.x = 150;
       }

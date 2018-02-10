@@ -34,7 +34,7 @@ export default class Goomba extends Enemy {
     if(enemy.verticalHit(enemy, mario)){
       // Mario jumps on the enemy
       mario.enemyBounce(enemy);
-      enemy.scene.sound.playAudioSprite('sfx', 'Squish');
+      enemy.scene.sound.playAudioSprite('sfx', 'smb_stomp');
       enemy.getFlat(enemy, mario);
       // get points
       enemy.scene.updateScore(100);

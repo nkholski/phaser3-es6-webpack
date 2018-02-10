@@ -267,7 +267,7 @@ class MarioBrosScene extends Phaser.Scene {
           this.music.resume();
           sound.destroy();
         });
-        sound.play('Time Warning');
+        sound.play('smb_warning');
       }
       if (this.levelTimer.displayedTime < 1) {
         this.mario.die();
@@ -340,13 +340,13 @@ class MarioBrosScene extends Phaser.Scene {
           if (sprite.type === "mario" && sprite.animSuffix === "") {
             // Can't break it anyway. Bounce it a bit.
             sprite.scene.bounceTile.restart(tile);
-            sprite.scene.sound.playAudioSprite('sfx', 'Bump');
+            sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
           }
           else {
             // get points
             sprite.scene.updateScore(50);
             sprite.scene.map.removeTileAt(tile.x, tile.y, true, true, this.groundLayer);
-            sprite.scene.sound.playAudioSprite('sfx', 'Break');
+            sprite.scene.sound.playAudioSprite('sfx', 'smb_breakblock');
             sprite.scene.blockEmitter.emitParticle(6, tile.x * 16, tile.y * 16);
           }
           break;
@@ -360,10 +360,13 @@ class MarioBrosScene extends Phaser.Scene {
           }
           break;
         default:
-          sprite.scene.sound.playAudioSprite('sfx', 'Bump');
+          sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
           break;
 
       }
+    }
+    else {
+      sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
     }
   }
 
@@ -387,8 +390,8 @@ class MarioBrosScene extends Phaser.Scene {
   removeFlag(step = 0) {
     switch (step) {
       case 0:
-        this.music.stop();
-        this.sound.playAudioSprite('sfx', 'Flagpole');
+        this.music.pause();
+        this.sound.playAudioSprite('sfx', 'smb_flagpole');
         this.mario.play("mario/climb" + this.mario.animSuffix);
         this.mario.x = this.finishLine.x - 1;
         this.tweens.add({
@@ -405,6 +408,23 @@ class MarioBrosScene extends Phaser.Scene {
         });
         break;
       case 1:
+        let sound = this.sound.addAudioSprite('sfx');
+        sound.on('ended', (sound) => {
+          this.mario.x = 48;
+          this.mario.y = -32;
+          this.mario.body.setVelocity(0);
+          this.mario.alpha = 1;
+          this.music.rate = 1;          
+          this.music.seek = 0;
+          this.music.resume();
+          this.levelTimer.hurry = false;
+          this.levelTimer.time = 150 * 1000;
+          this.levelTimer.displayedTime = 255;   
+          this.physics.world.resume();
+
+          sound.destroy();
+        });
+        sound.play('smb_stage_clear');
 
         this.mario.play("run" + this.mario.animSuffix);
 
@@ -421,7 +441,6 @@ class MarioBrosScene extends Phaser.Scene {
           targets: this.mario,
           alpha: 0,
           duration: 500,
-          onComplete: () => alert("END")
         });
         break;
     }
