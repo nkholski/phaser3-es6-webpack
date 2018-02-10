@@ -16,4 +16,5 @@ dump/
 *.docx
 *.patch
 *.bak*
+*.old*
 higherVolume/
