@@ -212,9 +212,35 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">sprites/controller/button.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>11,10,21,21</rect>
+                <key>scale9Paddings</key>
+                <rect>11,10,21,21</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/controller/dpad.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>19,19,37,37</rect>
+                <key>scale9Paddings</key>
+                <rect>19,19,37,37</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">sprites/flag.png</key>
+            <key type="filename">sprites/mario/climb0.png</key>
             <key type="filename">sprites/mario/climb1.png</key>
-            <key type="filename">sprites/mario/climb2.png</key>
             <key type="filename">sprites/mario/dead.png</key>
             <key type="filename">sprites/mario/jump.png</key>
             <key type="filename">sprites/mario/stand.png</key>
@@ -240,8 +266,8 @@
                 <false/>
             </struct>
             <key type="filename">sprites/mario/bend.png</key>
-            <key type="filename">sprites/mario/climb1Super.png</key>
-            <key type="filename">sprites/mario/climbSuper2.png</key>
+            <key type="filename">sprites/mario/climbSuper0.png</key>
+            <key type="filename">sprites/mario/climbSuper1.png</key>
             <key type="filename">sprites/mario/fire.png</key>
             <key type="filename">sprites/mario/half.png</key>
             <key type="filename">sprites/mario/jumpSuper.png</key>

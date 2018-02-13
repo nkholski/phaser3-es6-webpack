@@ -17,15 +17,42 @@ Please any submit issues you have, including proposals. Ask me before preparing 
 - Extend the sprites texture atlas from the spritesheets I still use so I can dump them
 
 # Parts of API used:
-TODO: Go through the soruce and make a list of what parts of the API I use.
-Tilemaps
-Sprites
-Arcade physics
-Animation
-Audio
+A messy list of things I used from the Phaser API. I'll try to improve this, but it gives a hind of what you might expect to find in the source code to read bring to your own projects.
+
+**Preloader**
+- image, tilemapTiledJSON, spritesheet, atlas, audio, audiosprite, bitmapFont, plugin
+**Input**
+- Phaser.Input.Keyboard
+- Touch controls
+**Audio**
+- Audioatlas (including some event listeners)
+- Music (pause/resume/rate)
+**Animations**
+- Animating sprites
+**Tilemaps**
+- Multiple layers
+- Dynamic layers
+- Animated tiles (Plugin: https://github.com/nkholski/phaser-animated-tiles)
+- Object layers are used to manipulate the map, define areas and add enemies. 
+**Tilesprite**
+- Background clouds
+**Sprites**
+All sprites are ES6 extensions of native Phaser.Sprite
+**Physics**
+- Acceleration
+- body sizes
+- pause
+- collisions and overlap sprite/sprite and sprite/tilemaplayer
+**Groups**
+- Sprites are put in groups
+**BitmapText**
+- For score and timer
+**Tweens**
+- entering pipes, ending the world etcetera.
 
 # Thanks to
-@AleBles - Updated webpack-stuff when the project was stalled at Beta 19.
+- The Phaser team @photonstorm, @mikewesthad and @pavle-goloskokovic for building Phaser 3 in general and for assisting while building this.
+- @AleBles - Updated webpack-stuff when the project was stalled at Beta 19.
 
 # Setup
 You’ll need to install a few things before you have a working copy of the project.

@@ -12,22 +12,22 @@ class MarioBrosScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('background-clouds', '/assets//images/clouds.png'); // 16-bit later
+    this.load.image('background-clouds', 'assets/images/clouds.png'); // 16-bit later
     // Tilemap with a lot of objects and tile-properties tricks
-    this.load.tilemapTiledJSON('map', '/assets//tilemaps/super-mario.json');
+    this.load.tilemapTiledJSON('map', 'assets/tilemaps/super-mario.json');
     // I load the tiles as a spritesheet so I can use it for both sprites and tiles
-    this.load.spritesheet('tiles', '/assets//images/super-mario.png', { frameWidth: 16, frameHeight: 16 });
+    this.load.spritesheet('tiles', 'assets/images/super-mario.png', { frameWidth: 16, frameHeight: 16 });
     // Just for fun:
-    this.load.spritesheet('tiles-16bit', '/assets//images/super-mario-16bit.png', { frameWidth: 16, frameHeight: 16 });
+    this.load.spritesheet('tiles-16bit', 'assets/images/super-mario-16bit.png', { frameWidth: 16, frameHeight: 16 });
     // Spritesheets with fixed sizes. Should be replaced with atlas:
-    this.load.spritesheet('mario', '/assets//images/mario-sprites.png', { frameWidth: 16, frameHeight: 32 });
-    this.load.spritesheet('sprites16', '/assets//images/16x16sprites.png', { frameWidth: 16, frameHeight: 16 });
+    this.load.spritesheet('mario', 'assets/images/mario-sprites.png', { frameWidth: 16, frameHeight: 32 });
+    this.load.spritesheet('sprites16', 'assets/images/16x16sprites.png', { frameWidth: 16, frameHeight: 16 });
     // Beginning of an atlas to replace spritesheets
-    this.load.atlas('mario-sprites', '/assets//mario-sprites.png', '/assets//mario-sprites.json');
+    this.load.atlas('mario-sprites', 'assets/mario-sprites.png', 'assets/mario-sprites.json');
     // Music to play. Need to cut it for it to loop properly
     this.load.audio('overworld', [
-      '/assets//music/overworld.ogg',
-      '/assets//music/overworld.mp3'
+      'assets/music/overworld.ogg',
+      'assets/music/overworld.mp3'
     ]);
 
     this.load.audioSprite('sfx', [
@@ -42,7 +42,7 @@ class MarioBrosScene extends Phaser.Scene {
     // Load plugin for animated tiles. This is just a first build of an upcoming plugin.
     // It's not optimized and lack features. The source code will be released when an
     // official first version is released.
-    this.load.plugin('AnimatedTiles', '/assets/plugins/AnimatedTiles.js');
+    this.load.plugin('AnimatedTiles', 'assets/plugins/AnimatedTiles.js');
   }
 
   create() {
@@ -87,8 +87,8 @@ class MarioBrosScene extends Phaser.Scene {
     this.mario = new Mario({
       scene: this,
       key: 'mario',
-      x: 16 * 6,
-      y: this.sys.game.config.height - 48
+      x: 16 * 6, // 3500, 
+      y: this.sys.game.config.height - 48 -48
     });
 
     // This group contains all enemies for collision and calling update-methods
@@ -178,7 +178,7 @@ class MarioBrosScene extends Phaser.Scene {
       jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
       left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
       right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-      down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+      down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
     };
 
     this.cameras.main.setBounds(0, 0, this.groundLayer.width * this.groundLayer.scaleX, this.groundLayer.height * this.groundLayer.scaleY);
@@ -239,6 +239,57 @@ class MarioBrosScene extends Phaser.Scene {
 
     // Set bounds for current room
     this.mario.setRoomBounds(this.rooms);
+
+    // Touch controls is really just a quick hack to try out performance on mobiles,
+    // It's not itended as a suggestion on how to do it in a real game.
+    let jumpButton = this.add.sprite(350,180);
+    jumpButton.play("button");
+    let dpad = this.add.sprite(20,170);
+    dpad.play("dpad");
+    this.touchControls = {
+      dpad: dpad,
+      abutton: jumpButton,
+      left: false,
+      right: false,
+      down: false,
+      jump: false,
+      visible: false
+    }
+    jumpButton.setScrollFactor(0,0);
+    jumpButton.alpha = 0;
+    jumpButton.setInteractive();
+    jumpButton.on('pointerdown', (pointer) => {
+      this.touchControls.jump = true;
+    });
+    jumpButton.on('pointerup', (pointer) => {
+      this.touchControls.jump = false;
+    });
+    dpad.setScrollFactor(0,0);
+    dpad.alpha = 0;
+    dpad.setInteractive();
+    dpad.on('pointerdown', (pointer) => {
+      let x = dpad.x + dpad.width - pointer.x;
+      let y = dpad.y + dpad.height - pointer.y;
+      console.log(x,y);      
+      if(y>0 || Math.abs(x)>-y){
+        if(x>0){
+          console.log('going left');
+          this.touchControls.left = true;
+        }
+        else {
+          console.log('going right')
+          this.touchControls.right = true;
+        }
+      }else {
+        this.touchControls.down = true;
+      }
+    });
+    dpad.on('pointerup', (pointer) => {
+      this.touchControls.left = false;
+      this.touchControls.right = false;
+      this.touchControls.down = false;
+    });
+     window.toggleTouch = this.toggleTouch.bind(this);
   }
 
   update(time, delta) {
@@ -446,6 +497,17 @@ class MarioBrosScene extends Phaser.Scene {
     }
   }
 
+  toggleTouch(){
+    this.touchControls.visible = !this.touchControls.visible;
+    if(this.touchControls.visible){
+      this.touchControls.dpad.alpha = 0;
+      this.touchControls.abutton.alpha = 0;
+    }
+    else {
+      this.touchControls.dpad.alpha = 0.5;
+      this.touchControls.abutton.alpha = 0.5;
+    }
+  }
 }
 
 export default MarioBrosScene;

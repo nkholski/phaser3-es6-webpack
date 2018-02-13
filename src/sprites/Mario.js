@@ -80,6 +80,14 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     }
 
 
+    //
+    let input = {
+      left: keys.left.isDown || this.scene.touchControls.left,
+      right: keys.right.isDown || this.scene.touchControls.right,
+      down: keys.down.isDown || this.scene.touchControls.down,
+      jump: keys.jump.isDown || this.scene.touchControls.jump,
+    }
+
     //this.angle++
     //  console.log(this.body.velocity.y);
     if (this.body.velocity.y > 0) {
@@ -90,7 +98,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
     this.jumpTimer-=delta;
 
-    if (keys.left.isDown) {
+    if (input.left) {
       if (this.body.velocity.y === 0) {
         this.run(-this.acceleration);
       }
@@ -99,7 +107,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       }
       this.flipX = true;
     }
-    else if (keys.right.isDown) {
+    else if (input.right) {
       if (this.body.velocity.y === 0) {
         this.run(this.acceleration);
       }
@@ -125,10 +133,10 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       this.run(0);
     }
 
-    if (keys.jump.isDown && (!this.jumping || this.jumpTimer>0)) {
+    if (input.jump && (!this.jumping || this.jumpTimer>0)) {
       this.jump();
     }
-    else if(!keys.jump.isDown && this.body.blocked.down){
+    else if(!input.jump && this.body.blocked.down){
       this.jumping = false;
     }
 
@@ -139,16 +147,16 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       anim = "jump"
     } else if (this.body.velocity.x !== 0) {
       anim = "run";
-      if ((keys.right.isDown || keys.left.isDown) && ((this.body.velocity.x > 0 && this.body.acceleration.x < 0) || (this.body.velocity.x < 0 && this.body.acceleration.x > 0))) {
+      if ((input.left || input.right) && ((this.body.velocity.x > 0 && this.body.acceleration.x < 0) || (this.body.velocity.x < 0 && this.body.acceleration.x > 0))) {
         anim = "turn";
       }
-      else if (this.animSuffix != "" && keys.down.isDown && !(keys.right.isDown || keys.left.isDown)) {
+      else if (this.animSuffix != "" && input.down && !(input.right || input.left)) {
         anim = "bend";
       }
     }
     else {
       anim = "stand";
-      if (this.animSuffix != "" && keys.down.isDown && !(keys.right.isDown || keys.left.isDown)) {
+      if (this.animSuffix != "" && input.down && !(input.right || input.left)) {
         anim = "bend";
       }
     }
@@ -158,7 +166,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       this.anims.play(anim);
     }
 
-    if (keys.down.isDown && this.body.velocity.x < 100) {
+    if (input.down && this.body.velocity.x < 100) {
       this.bending = true;
     }
 

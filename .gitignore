@@ -9,7 +9,6 @@ src_old
 phaserTilemapfix
 *.zip
 *.xcf
-*.wav
 legacy*
 *.txt
 dump/
