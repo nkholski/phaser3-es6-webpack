@@ -1,5 +1,7 @@
 import 'phaser';
+import BootScene from './BootScene';
 import MarioBrosScene from './MarioBrosScene';
+import TitleScene from './TitleScene';
 
 
 let config = {
@@ -16,7 +18,9 @@ let config = {
         }
     },
     scene: [
-      MarioBrosScene
+        BootScene,
+        TitleScene,
+        MarioBrosScene,
     ]
 };
 

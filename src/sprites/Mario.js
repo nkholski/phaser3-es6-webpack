@@ -30,13 +30,17 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
 
     if (this.y > 2040) {
-      this.y = -32;
-      if(this.x<16){
-        this.x = 16;
-      }
-      this.alive = true;
-      this.scene.music.seek = 0;
-      this.scene.music.play();
+      // Really superdead, has been falling for a while.
+      this.scene.scene.start('TitleScene');
+
+
+      //this.y = -32;
+      //if(this.x<16){
+      //  this.x = 16;
+     // }
+      //this.alive = true;
+      //this.scene.music.seek = 0;
+      //this.scene.music.play();
     }else if(this.y>240 && this.alive){
       this.die();
     }
@@ -255,7 +259,6 @@ export default class Mario extends Phaser.GameObjects.Sprite {
   }
 
   die() {
-    // Called when killed by enemy or TODO: Timeup
     this.scene.music.pause(); 
     this.play("death");
     this.scene.sound.playAudioSprite('sfx', 'smb_mariodie');

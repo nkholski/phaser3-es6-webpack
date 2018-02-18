@@ -1,14 +1,3 @@
-/**
- * 
- *  THIS IS THE FIRST BUILD OF A UPCOMING PLUGIN
- *  = Not optimized
- *  = Lacking features
- *  = API might change (even if the API is very limited)
- * 
- */
-
-
-
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -88,12 +77,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1);
+"use strict";
 
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
 
 /**
 * @author       Niklas Berg <nkholski@niklasberg.se>
@@ -101,7 +86,19 @@ module.exports = __webpack_require__(1);
 * @license      {@link https://github.com/nkholski/phaser3-animated-tiles/blob/master/LICENSE|MIT License}
 */
 
-var AnimatedTiles = function (scene) {
+//
+// This plugin is based on Photonstorms Phaser 3 plugin template.
+// The template is ES5 compliant while the added code uses ES6 features,
+// but the plan is to turn it all into a ES6 Class. 
+
+var AnimatedTiles = function AnimatedTiles(scene) {
+    /*
+     TODO: 
+    1. Fix property names which is a mess after adding support for multiple maps, tilesets and layers.
+    2. Helper functions: Get mapIndex by passing a map (and maybe support it as argument to methods), Get layerIndex, get tile index from properties.
+    
+    */
+
     //  The Scene that owns this plugin
     this.scene = scene;
 
@@ -113,15 +110,20 @@ var AnimatedTiles = function (scene) {
     this.map = null;
 
     // Array with all tiles to animate
+    // TODO: Turn on and off certain tiles.
     this.animatedTiles = [];
 
     // Global playback rate
     this.rate = 1;
-    // Playback rate per tile as multiple of the global rate.
-    this.tileRate = {};
 
     // Should the animations play or not?
     this.active = false;
+
+    // Should the animations play or not per layer. If global active is false this value makes no difference
+    this.activeLayer = [];
+
+    // Obey timescale?
+    this.followTimeScale = true;
 
     if (!scene.sys.settings.isBooted) {
         scene.sys.events.once('boot', this.boot, this);
@@ -131,11 +133,6 @@ var AnimatedTiles = function (scene) {
 //  Static function called by the PluginFile Loader.
 AnimatedTiles.register = function (PluginManager) {
     //  Register this plugin with the PluginManager, so it can be added to Scenes.
-
-    //  The first argument is the name this plugin will be known as in the PluginManager. It should not conflict with already registered plugins.
-    //  The second argument is a reference to the plugin object, which will be instantiated by the PluginManager when the Scene boots.
-    //  The third argument is the local mapping. This will make the plugin available under `this.sys.base` and also `this.base` from a Scene if
-    //  it has an entry in the InjectionMap.
     PluginManager.register('AnimatedTiles', AnimatedTiles, 'animatedTiles');
 };
 
@@ -143,152 +140,334 @@ AnimatedTiles.prototype = {
 
     //  Called when the Plugin is booted by the PluginManager.
     //  If you need to reference other systems in the Scene (like the Loader or DisplayList) then set-up those references now, not in the constructor.
-    boot: function () {
+    boot: function boot() {
         var eventEmitter = this.systems.events;
-
-        //  Listening to the following events is entirely optional, although we would recommend cleanly shutting down and destroying at least.
-        //  If you don't need any of these events then remove the listeners and the relevant methods too.
-
-        //eventEmitter.on('start', this.start, this);
-
-        //eventEmitter.on('preupdate', this.preUpdate, this);
-        //eventEmitter.on('update', this.update, this);
         eventEmitter.on('postupdate', this.postUpdate, this);
-
-        //eventEmitter.on('pause', this.pause, this);
-        //eventEmitter.on('resume', this.resume, this);
-
-        //eventEmitter.on('sleep', this.sleep, this);
-        //eventEmitter.on('wake', this.wake, this);
-
         eventEmitter.on('shutdown', this.shutdown, this);
         eventEmitter.on('destroy', this.destroy, this);
     },
 
     // Initilize support for animated tiles on given map
-    init: function (map) {
-        this.map = map;
-        // TODO: Allow to specify tileset?
-        this.map.tilesets.forEach((tileset)=>
-         {        
-            this.animatedTiles = this.getAnimatedTiles(tileset.tileData);
-         }
-        )
-        this.start(); // Start the animations by default
+    init: function init(map) {
+        var _this = this;
+
+        // TODO: Check if map is initilized already, if so do it again but overwrite the old.
+        var mapAnimData = this.getAnimatedTiles(map);
+        var animatedTiles = {
+            map: map,
+            animatedTiles: mapAnimData,
+            active: true,
+            rate: 1,
+            activeLayer: []
+        };
+        var i = 0;
+        map.layers.forEach(function () {
+            return animatedTiles.activeLayer.push(true);
+        });
+        this.animatedTiles.push(animatedTiles);
+        if (this.animatedTiles.length === 1) {
+            this.active = true; // Start the animations by default
+        }
+        this.animatedTiles[this.animatedTiles.length - 1].animatedTiles.forEach(function (animatedTile) {
+            animatedTile.tiles.forEach(function (layer) {
+                _this.updateLayer(animatedTile, layer);
+            });
+        });
     },
 
-    setRate(rate, tile = null) {
-        if (!index) {
-            this.rate = rate;
+    setRate: function setRate(rate) {
+        var gid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var map = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+        if (gid === null) {
+            if (map === null) {
+                this.rate = rate;
+            } else {
+                this.animatedTiles[map].rate = rate;
+            }
+        } else {
+            var loopThrough = function loopThrough(animatedTiles) {
+                animatedTiles.forEach(function (animatedTile) {
+                    if (animatedTile.index === gid) {
+                        animatedTile.rate = rate;
+                    }
+                });
+            };
+            if (map === null) {
+                this.animatedTiles.forEach(function (animatedTiles) {
+                    loopThrough(animatedTiles.animatedTiles);
+                });
+            } else {
+                loopThrough(this.animatedTiles[map].animatedTiles);
+            }
         }
         // if tile is number (gid) --> set rate for that tile
-        // if tile is object -> check properties matching object and set rate
+        // TODO: if passing an object -> check properties matching object and set rate
+    },
+
+
+    resetRates: function resetRates() {
+        var mapIndex = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        if (mapIndex === null) {
+            this.rate = 1;
+            this.animatedTiles.forEach(function (mapAnimData) {
+                mapAnimData.rate = 1;
+                mapAnimData.animatedTiles.forEach(function (tileAnimData) {
+                    tileAnimData.rate = 1;
+                });
+            });
+        } else {
+            this.animatedTiles[mapIndex].rate = 1;
+            this.animatedTiles[mapIndex].animatedTiles.forEach(function (tileAnimData) {
+                tileAnimData.rate = 1;
+            });
+        }
     },
 
     //  Start (or resume) animations
-    start: function () {
-        this.active = true;
+    resume: function resume() {
+        var _this2 = this;
+
+        var layerIndex = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var mapIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        var scope = mapIndex === null ? this : this.animatedTiles[mapIndex];
+        if (layerIndex === null) {
+            scope.active = true;
+        } else {
+            scope.activeLayer[layerIndex] = true;
+            scope.animatedTiles.forEach(function (animatedTile) {
+                _this2.updateLayer(animatedTile, animatedTile.tiles[layerIndex]);
+            });
+        }
     },
 
     // Stop (or pause) animations
-    stop: function () {
-        this.active = false;
+    pause: function pause() {
+        var layerIndex = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var mapIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        var scope = mapIndex === null ? this : this.animatedTiles[mapIndex];
+        if (layerIndex === null) {
+            scope.active = false;
+        } else {
+            scope.activeLayer[layerIndex] = false;
+        }
     },
 
-    //  Called every Scene step - phase 3
-    postUpdate: function (time, delta) {
+    postUpdate: function postUpdate(time, delta) {
+        var _this3 = this;
+
         if (!this.active) {
             return;
         }
-        this.animatedTiles.forEach(
-            (animatedTile) => {
-                //let animatedTile = this.animatedTiles[tilkey];
-                animatedTile.next -= delta * this.rate;
+        // Elapsed time is the delta multiplied by the global rate and the scene timeScale if folowTimeScale is true
+        var globalElapsedTime = delta * this.rate * (this.followTimeScale ? this.scene.time.timeScale : 1);
+        this.animatedTiles.forEach(function (mapAnimData) {
+            if (!mapAnimData.active) {
+                return;
+            }
+            // Multiply with rate for this map
+            var elapsedTime = globalElapsedTime * mapAnimData.rate;
+            mapAnimData.animatedTiles.forEach(function (animatedTile) {
+                // Reduce time for current tile, multiply elapsedTime with this tile's private rate
+                animatedTile.next -= elapsedTime * animatedTile.rate;
+                // Time for current tile is up!!!
                 if (animatedTile.next < 0) {
-                    let currentIndex = animatedTile.currentFrame;
-                    let newIndex = currentIndex + 1;
-                    if (newIndex > (animatedTile.frames.length - 1)) {
+                    // Remember current frame index
+                    var currentIndex = animatedTile.currentFrame;
+                    // Remember the tileId of current tile
+                    var oldTileId = animatedTile.frames[currentIndex].tileid;
+                    // Advance to next in line
+                    var newIndex = currentIndex + 1;
+                    // If we went beyond last frame, we just start over
+                    if (newIndex > animatedTile.frames.length - 1) {
                         newIndex = 0;
                     }
+                    // Set lifelength for current frame
                     animatedTile.next = animatedTile.frames[newIndex].duration;
+                    // Set index of current frame
                     animatedTile.currentFrame = newIndex;
-                    /**
-                     * 
-                     * TODO: 1. Gå på AnimationIndex, 
-                     * 2. ändra bara inom vyn: MEN då måste räkna ut nya tiles som inte syntes nyss. Kom ihåg förra området!
-                     * 
-                     */
-                    this.map.replaceByIndex(animatedTile.frames[currentIndex].tileid, animatedTile.frames[newIndex].tileid);
+                    // Store the tileId (gid) we will shift to
+                    // Loop through all tiles (via layers)
+                    //this.updateLayer
+                    animatedTile.tiles.forEach(function (layer, layerIndex) {
+                        if (!mapAnimData.activeLayer[layerIndex]) {
+                            return;
+                        }
+                        _this3.updateLayer(animatedTile, layer, oldTileId);
+                    });
                 }
-                else {
-                    // TODO: Uppdatera sådana som inte synts i förra uppdateringen
+            }); // animData loop
+        }); // Map loop
+    },
 
-                }
+    updateLayer: function updateLayer(animatedTile, layer) {
+        var oldTileId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : -1;
+
+        var tilesToRemove = [];
+        var tileId = animatedTile.frames[animatedTile.currentFrame].tileid;
+        layer.forEach(function (tile) {
+            // If the tile is removed or has another index than expected, it's
+            // no longer animated. Mark for removal.
+            if (oldTileId > -1 && (tile === null || tile.index !== oldTileId)) {
+                tilesToRemove.push(tile);
+            } else {
+                // Finally we set the index of the tile to the one specified by current frame!!!
+                tile.index = tileId;
             }
-        );
+        });
+        // Remove obselete tiles
+        tilesToRemove.forEach(function (tile) {
+            var pos = layer.indexOf(tile);
+            if (pos > -1) {
+                layer.splice(pos, 1);
+            } else {
+                console.error("This shouldn't happen. Not at all. Blame Phaser Animated Tiles plugin. You'll be fine though.");
+            }
+        });
     },
 
-    resetRate: function (globalOnly = false) {
-        this.rate = 1;
-        if (!globalOnly) {
-            Object.keys(this.tileRates).forEach(
-                (key) => {
-                    this.tileRates[key] = 1;
-                }
-            )
-        }
-    },
 
     //  Called when a Scene shuts down, it may then come back again later (which will invoke the 'start' event) but should be considered dormant.
-    shutdown: function () {
-    },
-
+    shutdown: function shutdown() {},
 
     //  Called when a Scene is destroyed by the Scene Manager. There is no coming back from a destroyed Scene, so clear up all resources here.
-    destroy: function () {
+    destroy: function destroy() {
         this.shutdown();
-
         this.scene = undefined;
     },
 
+    getAnimatedTiles: function getAnimatedTiles(map) {
+        var _this4 = this;
 
-
-    getAnimatedTiles: function (tileData) {
-        // Buildning the array with tiles that should be animated
-        let animatedTiles = [];
-        Object.keys(tileData).forEach(
-            (key) => {
-                console.log(key);
-                if (tileData[key].hasOwnProperty("animation")) {
-                    let tile = {
-                        key,
-                        frames: [],
-                        currentFrame: 0
+        // this.animatedTiles is an array of objects with information on how to animate and which tiles.
+        var animatedTiles = [];
+        // loop through all tilesets
+        map.tilesets.forEach(
+        // Go through the data stored on each tile (not tile on the tilemap but tile in the tileset)
+        function (tileset) {
+            var tileData = tileset.tileData;
+            Object.keys(tileData).forEach(function (index) {
+                index = parseInt(index);
+                // If tile has animation info we'll dive into it
+                if (tileData[index].hasOwnProperty("animation")) {
+                    console.log("gid:",index, tileset.firstgid);
+                    var animatedTileData = {
+                        index: index + tileset.firstgid, // gid of the original tile
+                        frames: [], // array of frames
+                        currentFrame: 0, // start on first frame
+                        tiles: [], // array with one array per layer with list of tiles that depends on this animation data
+                        rate: 1 // multiplier, set to 2 for double speed or 0.25 quarter speed
                     };
-                    tileData[key].animation.forEach((frame) => { frame.tileid++; tile.frames.push(frame) });
-                    tile.next = tile.frames[0].duration;
-                    animatedTiles.push(tile);
-                    this.tileRate[key] = 1;
-                    /**
-                     * 
-                     *  TODO: Add animationIndex to all
-                     * 
-                     */
-
+                    // push all frames to the animatedTileData
+                    tileData[index].animation.forEach(function (frameData) {
+                        let frame = {
+                            duration: frameData.duration,
+                            tileid: frameData.tileid+tileset.firstgid
+                        };
+                        animatedTileData.frames.push(frame);
+                    });
+                    // time until jumping to next frame
+                    animatedTileData.next = animatedTileData.frames[0].duration;
+                    // Go through all layers for tiles
+                    map.layers.forEach(function (layer) {
+                        if (layer.tilemapLayer.type === "StaticTilemapLayer") {
+                            // We just push an empty array if the layer is static (impossible to animate). 
+                            // If we just skip the layer, the layer order will be messed up
+                            // when updating animated tiles and things will look awful.
+                            animatedTileData.tiles.push([]);
+                            return;
+                        }
+                        // tiles array for current layer
+                        var tiles = [];
+                        // loop through all rows with tiles...
+                        layer.data.forEach(function (tileRow) {
+                            // ...and loop through all tiles in that row
+                            tileRow.forEach(function (tile) {
+                                // Tiled start index for tiles with 1 but animation with 0. Thus that wierd "-1"                                                    
+                                if (tile.index - tileset.firstgid === index) {
+                                    tiles.push(tile);
+                                    console.log(tile,animatedTileData);
+                                }
+                            });
+                        });
+                        // add the layer's array with tiles to the tiles array.
+                        // this will make it possible to control layers individually in the future
+                        animatedTileData.tiles.push(tiles);
+                    });
+                    // animatedTileData is finished for current animation, push it to the animatedTiles-property of the plugin
+                    animatedTiles.push(animatedTileData);
                 }
-            }
-        )
-        return animatedTiles;
-    }
+            });
+        });
+        map.layers.forEach(function (layer, layerIndex) {
+            // layer indices array of booleans whether to animate tiles on layer or not
+            _this4.activeLayer[layerIndex] = true;
+        });
 
+        return animatedTiles;
+    },
+
+    putTileAt: function putTileAt(layer, tile, x, y) {
+        // Replaces putTileAt of the native API, but updates the list of animatedTiles in the process.
+        // No need to call updateAnimatedTiles as required for other modificatons of the tile-map
+    },
+    updateAnimatedTiles: function updateAnimatedTiles() {
+        // future args: x=null, y=null, w=null, h=null, container=null 
+        var x = null,
+            y = null,
+            w = null,
+            h = null,
+            container = null;
+        // 1. If no container, loop through all initilized maps
+        if (container === null) {
+            container = [];
+            this.animatedTiles.forEach(function (mapAnimData) {
+                container.push(mapAnimData);
+            });
+        }
+        // 2. If container is a map, loop through it's layers
+        // container = [container];
+
+        // 1 & 2: Update the map(s)
+        container.forEach(function (mapAnimData) {
+            var chkX = x !== null ? x : 0;
+            var chkY = y !== null ? y : 0;
+            var chkW = w !== null ? mapAnimData.map.width : 10;
+            var chkH = h !== null ? mapAnimData.map.height : 10;
+
+            mapAnimData.animatedTiles.forEach(function (tileAnimData) {
+                tileAnimData.tiles.forEach(function (tiles, layerIndex) {
+                    var layer = mapAnimData.map.layers[layerIndex];
+                    if (layer.type === "StaticTilemapLayer") {
+                        return;
+                    }
+                    for (var _x9 = chkX; _x9 < chkX + chkW; _x9++) {
+                        for (var _y = chkY; _y < chkY + chkH; _y++) {
+                            var tile = mapAnimData.map.layers[layerIndex].data[_x9][_y];
+                            // should this tile be animated?
+                            if (tile.index == tileAnimData.index) {
+                                // is it already known? if not, add it to the list
+                                if (tiles.indexOf(tile) === -1) {
+                                    tiles.push(tile);
+                                }
+                                // update index to match current fram of this animation
+                                tile.index = tileAnimData.frames[tileAnimData.currentFrame].tileid;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        // 3. If container is a layer, just loop through it's tiles
+    }
 };
 
 AnimatedTiles.prototype.constructor = AnimatedTiles;
 
-//  Make sure you export the plugin for webpack to expose
-
 module.exports = AnimatedTiles;
-
 
 /***/ })
 /******/ ]);

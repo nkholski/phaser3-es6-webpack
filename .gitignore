@@ -8,7 +8,6 @@ src_old
 *.old.js
 phaserTilemapfix
 *.zip
-*.xcf
 legacy*
 *.txt
 dump/

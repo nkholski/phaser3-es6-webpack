@@ -4,48 +4,31 @@ import Turtle from './sprites/Turtle';
 import PowerUp from './sprites/PowerUp';
 import SMBTileSprite from './sprites/SMBTileSprite';
 import makeAnimations from './helpers/animations';
+import AnimatedTiles from 'phaser-animated-tiles';
+
 class MarioBrosScene extends Phaser.Scene {
-  constructor() {
+  constructor(test) {
     super({
       key: 'MarioBrosScene'
     });
   }
 
   preload() {
-    this.load.image('background-clouds', 'assets/images/clouds.png'); // 16-bit later
-    // Tilemap with a lot of objects and tile-properties tricks
-    this.load.tilemapTiledJSON('map', 'assets/tilemaps/super-mario.json');
-    // I load the tiles as a spritesheet so I can use it for both sprites and tiles
-    this.load.spritesheet('tiles', 'assets/images/super-mario.png', { frameWidth: 16, frameHeight: 16 });
-    // Just for fun:
-    this.load.spritesheet('tiles-16bit', 'assets/images/super-mario-16bit.png', { frameWidth: 16, frameHeight: 16 });
-    // Spritesheets with fixed sizes. Should be replaced with atlas:
-    this.load.spritesheet('mario', 'assets/images/mario-sprites.png', { frameWidth: 16, frameHeight: 32 });
-    this.load.spritesheet('sprites16', 'assets/images/16x16sprites.png', { frameWidth: 16, frameHeight: 16 });
-    // Beginning of an atlas to replace spritesheets
-    this.load.atlas('mario-sprites', 'assets/mario-sprites.png', 'assets/mario-sprites.json');
-    // Music to play. Need to cut it for it to loop properly
-    this.load.audio('overworld', [
-      'assets/music/overworld.ogg',
-      'assets/music/overworld.mp3'
-    ]);
-
-    this.load.audioSprite('sfx', [
-      'assets/audio/sfx.ogg',
-      'assets/audio/sfx.mp3'
-    ], 'assets/audio/sfx.json', {
-        instances: 4
-      });
-
-    this.load.bitmapFont('font', 'assets/fonts/font.png', 'assets/fonts/font.fnt');
-
-    // Load plugin for animated tiles. This is just a first build of an upcoming plugin.
-    // It's not optimized and lack features. The source code will be released when an
-    // official first version is released.
-    this.load.plugin('AnimatedTiles', 'assets/plugins/AnimatedTiles.js');
   }
 
   create() {
+    this.cleanUp();
+    if (this.registry.get('attractMode')) {
+      this.attractMode = {
+        recording: this.sys.cache.json.entries.entries.attractMode,
+        current: 0,
+        time: 0
+      }
+    }
+    else {
+      this.attractMode = null;
+    }
+
     // Install AnimatedTiles plugin to allow to use it
     this.sys.install('AnimatedTiles');
 
@@ -88,7 +71,7 @@ class MarioBrosScene extends Phaser.Scene {
       scene: this,
       key: 'mario',
       x: 16 * 6, // 3500, 
-      y: this.sys.game.config.height - 48 -48
+      y: this.sys.game.config.height - 48 - 48
     });
 
     // This group contains all enemies for collision and calling update-methods
@@ -221,6 +204,12 @@ class MarioBrosScene extends Phaser.Scene {
     }
     this.score.textObject.setScrollFactor(0, 0);
 
+    if (this.attractMode) {
+      hud.alpha = 0;
+      this.levelTimer.textObject.alpha = 0;
+      this.score.textObject.alpha = 0;
+    }
+
     // Prepare the finishLine
     let worldEndAt = -1;
     for (let x = 0; x < this.groundLayer.width; x++) {
@@ -242,9 +231,9 @@ class MarioBrosScene extends Phaser.Scene {
 
     // Touch controls is really just a quick hack to try out performance on mobiles,
     // It's not itended as a suggestion on how to do it in a real game.
-    let jumpButton = this.add.sprite(350,180);
+    let jumpButton = this.add.sprite(350, 180);
     jumpButton.play("button");
-    let dpad = this.add.sprite(20,170);
+    let dpad = this.add.sprite(20, 170);
     dpad.play("dpad");
     this.touchControls = {
       dpad: dpad,
@@ -255,7 +244,7 @@ class MarioBrosScene extends Phaser.Scene {
       jump: false,
       visible: false
     }
-    jumpButton.setScrollFactor(0,0);
+    jumpButton.setScrollFactor(0, 0);
     jumpButton.alpha = 0;
     jumpButton.setInteractive();
     jumpButton.on('pointerdown', (pointer) => {
@@ -264,15 +253,15 @@ class MarioBrosScene extends Phaser.Scene {
     jumpButton.on('pointerup', (pointer) => {
       this.touchControls.jump = false;
     });
-    dpad.setScrollFactor(0,0);
+    dpad.setScrollFactor(0, 0);
     dpad.alpha = 0;
     dpad.setInteractive();
     dpad.on('pointerdown', (pointer) => {
       let x = dpad.x + dpad.width - pointer.x;
       let y = dpad.y + dpad.height - pointer.y;
-      console.log(x,y);      
-      if(y>0 || Math.abs(x)>-y){
-        if(x>0){
+      console.log(x, y);
+      if (y > 0 || Math.abs(x) > -y) {
+        if (x > 0) {
           console.log('going left');
           this.touchControls.left = true;
         }
@@ -280,7 +269,7 @@ class MarioBrosScene extends Phaser.Scene {
           console.log('going right')
           this.touchControls.right = true;
         }
-      }else {
+      } else {
         this.touchControls.down = true;
       }
     });
@@ -289,11 +278,66 @@ class MarioBrosScene extends Phaser.Scene {
       this.touchControls.right = false;
       this.touchControls.down = false;
     });
-     window.toggleTouch = this.toggleTouch.bind(this);
+    window.toggleTouch = this.toggleTouch.bind(this);
+
+    //this.cameras.main.roundPixels = true;
+
+    // Hide stuff while in attract mode
+    if (this.attractMode) {
+      hud.alpha = 0;
+      this.levelTimer.textObject.alpha = 0;
+      this.score.textObject.alpha = 0;
+      this.music.volume = 0;
+    }
+
+    // If the game ended while physics was disabled
+    this.physics.world.resume();
+
+
   }
 
   update(time, delta) {
     // Avoid running updates when physics is paused
+    this.record(delta);
+
+    /* console.log(time);*/
+    if (this.attractMode) {
+      this.attractMode.time += delta;
+      //console.log(this.attractMode.current);
+      //      console.log(this.attractMode.current, this.attractMode.recording.length);
+
+      if (this.mario.y > 240 || (this.attractMode.recording.length <= this.attractMode.current + 2) || this.attractMode.current === 14000) {
+        this.attractMode.current = 0;
+        this.attractMode.time = 0;
+        this.mario.x = 16 * 6; // 3500, 
+        this.tick = 0;
+        this.registry.set('restartScene', true);
+
+        //this.scene.stop();
+        //this.scene.switch('MarioBrosScene');
+        //this.create();
+        console.log("RESET");
+        //        this.mario.y = this.sys.game.config.height - 48 -48
+        //return;
+      }
+
+      if (this.attractMode.time >= this.attractMode.recording[this.attractMode.current + 1].time) {
+        this.attractMode.current++;
+        this.mario.x = this.attractMode.recording[this.attractMode.current].x;
+        this.mario.y = this.attractMode.recording[this.attractMode.current].y;
+        this.mario.body.setVelocity(this.attractMode.recording[this.attractMode.current].vx, this.attractMode.recording[this.attractMode.current].vy);
+
+      }
+      this.keys = {
+        jump: { isDown: this.attractMode.recording[this.attractMode.current].keys.jump },
+        left: { isDown: this.attractMode.recording[this.attractMode.current].keys.left },
+        right: { isDown: this.attractMode.recording[this.attractMode.current].keys.right },
+        down: { isDown: this.attractMode.recording[this.attractMode.current].keys.down },
+
+      }
+    }
+
+
     if (this.physics.world.isPaused) {
       return;
     }
@@ -461,19 +505,19 @@ class MarioBrosScene extends Phaser.Scene {
       case 1:
         let sound = this.sound.addAudioSprite('sfx');
         sound.on('ended', (sound) => {
-          this.mario.x = 48;
+          /*this.mario.x = 48;
           this.mario.y = -32;
           this.mario.body.setVelocity(0);
           this.mario.alpha = 1;
-          this.music.rate = 1;          
+          this.music.rate = 1;
           this.music.seek = 0;
           this.music.resume();
           this.levelTimer.hurry = false;
           this.levelTimer.time = 150 * 1000;
-          this.levelTimer.displayedTime = 255;   
-          this.physics.world.resume();
-
+          this.levelTimer.displayedTime = 255;
+          this.physics.world.resume();*/
           sound.destroy();
+          this.scene.start("TitleScene");
         });
         sound.play('smb_stage_clear');
 
@@ -497,9 +541,9 @@ class MarioBrosScene extends Phaser.Scene {
     }
   }
 
-  toggleTouch(){
+  toggleTouch() {
     this.touchControls.visible = !this.touchControls.visible;
-    if(this.touchControls.visible){
+    if (this.touchControls.visible) {
       this.touchControls.dpad.alpha = 0;
       this.touchControls.abutton.alpha = 0;
     }
@@ -507,6 +551,69 @@ class MarioBrosScene extends Phaser.Scene {
       this.touchControls.dpad.alpha = 0.5;
       this.touchControls.abutton.alpha = 0.5;
     }
+  }
+
+  record(delta) {
+    let update;
+    let keys = {
+      jump: this.keys.jump.isDown,
+      left: this.keys.left.isDown,
+      right: this.keys.right.isDown,
+      down: this.keys.down.isDown,
+    }
+    if (typeof (recording) === "undefined") {
+      console.log("DEFINE")
+      window.recording = [];
+      window.time = 0;
+      this.recordedKeys = {};
+      update = true;
+    }
+    else if (window.recording.length===1){
+      update = false;
+    }
+    else {
+      update = (time - recording[recording.length - 1].time) > 200; // update at least 5 times per second
+    }
+    time += delta;
+    if (!update) {
+      // update if keys changed
+      ["jump", "left", "right", "down"].forEach((dir) => {
+        if (keys[dir] != this.recordedKeys[dir]) {
+          update = true;
+        }
+      });
+    }
+    if (update) {
+      recording.push({ time, keys, x: this.mario.x, y: this.mario.y, vx: this.mario.body.velocity.x, vy: this.mario.body.velocity.y });
+    }
+    this.recordedKeys = keys;
+  }
+
+  cleanUp() {
+    // Scenes isn't properly destroyed yet.
+    // lists from    console.log(Object.keys(this));
+    let ignore = ["sys", "anims", "cache", "registry", "sound", "textures", "events", "cameras", "make", "add", "scene", "children", "cameras3d", "time", "data", "input", "load", "tweens", "lights", "physics"];
+    let whatThisHad = ["sys", "anims", "cache", "registry", "sound", "textures", "events", "cameras", "make", "add", "scene", "children", "cameras3d", "time", "data", "input", "load", "tweens", "lights", "physics", "attractMode", "destinations", "rooms", "eightBit", "music", "map", "tileset", "groundLayer", "mario", "enemyGroup", "powerUps", "keys", "blockEmitter", "bounceTile", "levelTimer", "score", "finishLine", "touchControls"];
+
+
+
+    whatThisHad.forEach(key => {
+      if (ignore.indexOf(key) === -1 && this[key]) {
+
+        switch (key) {
+          case "enemyGroup":
+          case "music":
+          case "map":
+            //case "tileset":
+            this[key].destroy();
+
+            break;
+        }
+
+        this[key] = null;
+
+      }
+    })
   }
 }
 
