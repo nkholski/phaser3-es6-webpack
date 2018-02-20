@@ -5,7 +5,7 @@ import TitleScene from './TitleScene';
 
 
 let config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     parent: 'content',
     width: 400,
     height: 240,

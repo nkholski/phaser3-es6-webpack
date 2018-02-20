@@ -159,6 +159,7 @@ class MarioBrosScene extends Phaser.Scene {
     // Any key could just replace the default (like this.key.jump)
     this.keys = {
       jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+      jump2: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
       left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
       right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
       down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
@@ -280,7 +281,7 @@ class MarioBrosScene extends Phaser.Scene {
     });
     window.toggleTouch = this.toggleTouch.bind(this);
 
-    //this.cameras.main.roundPixels = true;
+    this.cameras.main.roundPixels = true;
 
     // Hide stuff while in attract mode
     if (this.attractMode) {
@@ -330,6 +331,7 @@ class MarioBrosScene extends Phaser.Scene {
       }
       this.keys = {
         jump: { isDown: this.attractMode.recording[this.attractMode.current].keys.jump },
+        jump2: {isDown: false},
         left: { isDown: this.attractMode.recording[this.attractMode.current].keys.left },
         right: { isDown: this.attractMode.recording[this.attractMode.current].keys.right },
         down: { isDown: this.attractMode.recording[this.attractMode.current].keys.down },
