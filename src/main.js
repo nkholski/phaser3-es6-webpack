@@ -10,6 +10,7 @@ let config = {
     width: 400,
     height: 240,
     scaleMode: 0, //Phaser.ScaleManager.EXACT_FIT,
+    pixelArt: true,
     physics: {
         default: 'arcade',
         arcade: {
