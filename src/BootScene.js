@@ -1,3 +1,5 @@
+import AnimatedTiles from 'phaser-animated-tiles';
+
 class BootScene extends Phaser.Scene {
     constructor(test) {
       super({
@@ -37,7 +39,7 @@ class BootScene extends Phaser.Scene {
         // It's not optimized and lack features. The source code will be released when an
         // official first version is released.
         console.log("before")
-        this.load.plugin('AnimatedTiles', 'assets/plugins/AnimatedTiles.min.js');
+        this.load.plugin('AnimatedTiles', AnimatedTiles);
 
           console.log("af")
         this.load.json('attractMode', 'assets/json/attractMode.json');    }
