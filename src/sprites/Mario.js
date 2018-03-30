@@ -37,11 +37,11 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       //this.y = -32;
       //if(this.x<16){
       //  this.x = 16;
-     // }
+      // }
       //this.alive = true;
       //this.scene.music.seek = 0;
       //this.scene.music.play();
-    }else if(this.y>240 && this.alive){
+    } else if (this.y > 240 && this.alive) {
       this.die();
     }
 
@@ -54,8 +54,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     // Just run callbacks when hitting something from below or trying to enter it
     if (this.body.velocity.y < 0 || this.bending) {
       this.scene.physics.world.collide(this, this.scene.groundLayer, this.scene.tileCollision);
-    }
-    else {
+    } else {
       this.scene.physics.world.collide(this, this.scene.groundLayer);
     }
 
@@ -75,8 +74,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       if (this.star.timer < 0) {
         this.star.active = false;
         this.tint = 0xFFFFFF;
-      }
-      else {
+      } else {
         this.star.timer -= delta;
         this.star.step = (this.star.step === 5) ? 0 : this.star.step + 1;
         this.tint = [0xFFFFFF, 0xFF0000, 0xFFFFFF, 0x00FF00, 0xFFFFFF, 0x0000FF][this.star.step];
@@ -100,48 +98,44 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
     this.bending = false;
 
-    this.jumpTimer-=delta;
+    this.jumpTimer -= delta;
 
     if (input.left) {
       if (this.body.velocity.y === 0) {
         this.run(-this.acceleration);
-      }
-      else {
+      } else {
         this.run(-this.acceleration / 3);
       }
       this.flipX = true;
-    }
-    else if (input.right) {
+    } else if (input.right) {
       if (this.body.velocity.y === 0) {
         this.run(this.acceleration);
-      }
-      else {
+      } else {
         this.run(this.acceleration / 3);
       }
       this.flipX = false;
-    }
-    else if (this.body.blocked.down) {
+    } else if (this.body.blocked.down) {
 
       if (Math.abs(this.body.velocity.x) < 10) {
         this.body.setVelocityX(0);
         this.run(0);
-      }
-      else {
+      } else {
 
         this.run(((this.body.velocity.x > 0) ? -1 : 1) * this.acceleration / 2);
       }
 
 
-    }
-    else if (!this.body.blocked.down) {
+    } else if (!this.body.blocked.down) {
       this.run(0);
     }
 
-    if (input.jump && (!this.jumping || this.jumpTimer>0)) {
+    if (input.jump && (!this.jumping || this.jumpTimer > 0)) {
       this.jump();
-    }
-    else if(!input.jump && this.body.blocked.down){
-      this.jumping = false;
+    } else if (!input.jump) {
+      this.jumpTimer = -1; // Don't resume jump if button is released, prevents mini double-jumps
+      if (this.body.blocked.down) {
+        this.jumping = false;
+      }
     }
 
 
@@ -153,12 +147,10 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       anim = "run";
       if ((input.left || input.right) && ((this.body.velocity.x > 0 && this.body.acceleration.x < 0) || (this.body.velocity.x < 0 && this.body.acceleration.x > 0))) {
         anim = "turn";
-      }
-      else if (this.animSuffix != "" && input.down && !(input.right || input.left)) {
+      } else if (this.animSuffix != "" && input.down && !(input.right || input.left)) {
         anim = "bend";
       }
-    }
-    else {
+    } else {
       anim = "stand";
       if (this.animSuffix != "" && input.down && !(input.right || input.left)) {
         anim = "bend";
@@ -188,19 +180,18 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       return;
     }
 
-  if(!this.jumping){
-    if(this.animSuffix===""){
-      this.scene.sound.playAudioSprite('sfx', 'smb_jump-small');
+    if (!this.jumping) {
+      if (this.animSuffix === "") {
+        this.scene.sound.playAudioSprite('sfx', 'smb_jump-small');
+      } else {
+        this.scene.sound.playAudioSprite('sfx', 'smb_jump-super');
+      }
     }
-    else {
-      this.scene.sound.playAudioSprite('sfx', 'smb_jump-super');
+    if (this.body.velocity.y < 0 || this.body.blocked.down) {
+      this.body.setVelocityY(-200);
     }
-  }
-    if(this.body.velocity.y<0 || this.body.blocked.down){
-    this.body.setVelocityY(-200);
-    }
-    if(!this.jumping){
-    this.jumpTimer = 300;
+    if (!this.jumping) {
+      this.jumpTimer = 300;
     }
     this.jumping = true;
 
@@ -209,27 +200,25 @@ export default class Mario extends Phaser.GameObjects.Sprite {
   enemyBounce(enemy) {
     // Force Mario y-position up a bit (on top of the enemy) to avoid getting killed 
     // by neigbouring enemy before being able to bounce
-    this.body.y = enemy.body.y-this.body.height;
+    this.body.y = enemy.body.y - this.body.height;
     // TODO: if jump-key is down, add a boost value to jump-velocity to use and init jump for controls to handle.
     this.body.setVelocityY(-150);
-    
+
   }
 
   hurtBy(enemy) {
-    if(!this.alive){
+    if (!this.alive) {
       return;
     }
     if (this.star.active) {
       enemy.starKilled(enemy, this);
-    }
-    else if (this.wasHurt < 1) {
+    } else if (this.wasHurt < 1) {
       if (this.animSuffix !== "") {
         this.resize(false);
         this.scene.sound.playAudioSprite('sfx', 'smb_pipe');
 
         this.wasHurt = 2000;
-      }
-      else {
+      } else {
         this.die();
       }
     }
@@ -241,8 +230,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
       this.large();
       this.animSuffix = "Super";
       this.play("grow");
-    }
-    else {
+    } else {
       this.small();
       this.animSuffix = "";
       this.play("shrink");
@@ -259,7 +247,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
   }
 
   die() {
-    this.scene.music.pause(); 
+    this.scene.music.pause();
     this.play("death");
     this.scene.sound.playAudioSprite('sfx', 'smb_mariodie');
 
@@ -273,8 +261,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     if (init) {
       if (this.animSuffix === "") {
         this.play("stand");
-      }
-      else {
+      } else {
         this.play("bend" + this.animSuffix);
       }
       this.scene.sound.playAudioSprite('sfx', 'smb_pipe');
@@ -288,12 +275,14 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         y: this.y + 40,
         duration: 800,
         onComplete: function () {
-          console.log(this.targets, id, dir); console.log(id); console.log(dir); this.targets[0].enterPipe(id, dir, false);
+          console.log(this.targets, id, dir);
+          console.log(id);
+          console.log(dir);
+          this.targets[0].enterPipe(id, dir, false);
         },
       });
 
-    }
-    else {
+    } else {
       this.setDepth(1);
       this.enteringPipe = false;
       this.x = this.scene.destinations[id].x;
@@ -302,14 +291,14 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     }
   }
 
-  setRoomBounds(rooms){
+  setRoomBounds(rooms) {
     rooms.forEach(
       (room) => {
         if (this.x >= room.x && this.x <= (room.x + room.width)) {
           let cam = this.scene.cameras.main;
           let layer = this.scene.groundLayer;
           cam.setBounds(room.x, 0, room.width * layer.scaleX, layer.height * layer.scaleY);
-          this.scene.finishLine.active = (room.x===0);
+          this.scene.finishLine.active = (room.x === 0);
           this.scene.cameras.main.setBackgroundColor(room.sky);
           return;
         }
