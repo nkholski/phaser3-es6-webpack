@@ -16,7 +16,7 @@ class TitleScene extends Phaser.Scene {
         };
         this.anims.create(config);
     
-        this.title = this.add.sprite(this.sys.game.config.width/2-176/2, 48);
+        this.title = this.add.sprite(this.sys.game.config.width/2, 16*5);
         this.title.play("title");
         this.attractMode = this.scene.launch('MarioBrosScene');
         console.log(this.attractMode.stop);
@@ -48,7 +48,7 @@ class TitleScene extends Phaser.Scene {
         el.style.height = ch*0.8+"px";
         console.log(cw,ch);
 
-        this.pressX = this.add.bitmapText(14 * 8, 8*16, 'font', "PRESS X TO START", 8);
+        this.pressX = this.add.bitmapText(16 * 8+4, 8*16, 'font', "PRESS X TO START", 8);
         this.blink = 1000;
 
         this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
