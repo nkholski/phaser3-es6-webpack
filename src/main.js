@@ -6,6 +6,7 @@ import TitleScene from './TitleScene';
 
 let config = {
     type: Phaser.WEBGL,
+    pixelArt: true,
     parent: 'content',
     width: 400,
     height: 240,
