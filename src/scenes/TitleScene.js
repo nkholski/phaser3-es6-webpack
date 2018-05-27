@@ -52,12 +52,15 @@ class TitleScene extends Phaser.Scene {
         this.blink = 1000;
 
         this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+
+        this.input.on('pointerdown', function (pointer) {
+            this.startGame();
+        }, this);
     }
 
     update(time, delta) {
         if (this.registry.get('restartScene')) {
             this.restartScene();
-
         }
         this.blink -= delta;
         if (this.blink < 0) {
@@ -67,13 +70,16 @@ class TitleScene extends Phaser.Scene {
 
         if (!this.registry.get('attractMode')) {}
         if (this.startKey.isDown) {
-            this.scene.stop('GameScene');
-            this.registry.set('attractMode', false);
-            this.scene.start('GameScene');
-
+            this.startGame();
         }
     }
-    
+
+    startGame() {
+        this.scene.stop('GameScene');
+        this.registry.set('attractMode', false);
+        this.scene.start('GameScene');
+    }
+
     restartScene() {
         //        this.attractMode.stop();
         this.scene.stop('GameScene');
