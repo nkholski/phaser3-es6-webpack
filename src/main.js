@@ -3,14 +3,13 @@ import BootScene from './BootScene';
 import MarioBrosScene from './MarioBrosScene';
 import TitleScene from './TitleScene';
 
-
-let config = {
+const config = {
+    // For more settings see <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
     type: Phaser.WEBGL,
     pixelArt: true,
     parent: 'content',
     width: 400,
     height: 240,
-    scaleMode: 0, //Phaser.ScaleManager.EXACT_FIT,
     physics: {
         default: 'arcade',
         arcade: {
@@ -21,11 +20,8 @@ let config = {
     scene: [
         BootScene,
         TitleScene,
-        MarioBrosScene,
+        MarioBrosScene
     ]
 };
 
-let game = new Phaser.Game(config);
-
-/*
-https://codepen.io/samme/pen/JMVBeV*/
+const game = new Phaser.Game(config);
