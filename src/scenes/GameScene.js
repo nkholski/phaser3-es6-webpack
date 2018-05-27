@@ -31,12 +31,12 @@ class GameScene extends Phaser.Scene {
 
         // Places to warp to (from pipes). These coordinates is used also to define current room (see below)
         this.destinations = {};
-        
+
         // Array of rooms to keep bounds within to avoid the need of multiple tilemaps per level.
         // It might be a singe screen room like when going down a pipe or a sidescrolling level.
         // It's defined as objects in Tiled.
         this.rooms = [];
-        
+
         // Running in 8-bit mode (16-bit mode is avaliable for the tiles, but I haven't done any work on sprites etc)
         this.eightBit = true;
 
@@ -70,99 +70,14 @@ class GameScene extends Phaser.Scene {
             collide: true
         });
 
-        // CREATE MARIO!!!
-        this.mario = new Mario({
-            scene: this,
-            key: 'mario',
-            x: 16 * 6, 
-            y: this.sys.game.config.height - 48 - 48
-        });
-
         // This group contains all enemies for collision and calling update-methods
         this.enemyGroup = this.add.group();
-
-        // The map has one object layer with enemies as stamped tiles, 
-        // each tile has properties containing info on what enemy it represents.
-        this.map.getObjectLayer('enemies').objects.forEach(
-            (enemy) => {
-                let enemyObject;
-                switch (this.tileset.tileProperties[enemy.gid - 1].name) {
-                    case 'goomba':
-                        enemyObject = new Goomba({
-                            scene: this,
-                            key: 'sprites16',
-                            x: enemy.x,
-                            y: enemy.y
-                        });
-                        break;
-                    case 'turtle':
-                        enemyObject = new Turtle({
-                            scene: this,
-                            key: 'mario-sprites',
-                            x: enemy.x,
-                            y: enemy.y
-                        });
-                        break;
-                    default:
-                        console.error('Unknown:', this.tileset.tileProperties[enemy.gid - 1]);
-                        break;
-                }
-                this.enemyGroup.add(enemyObject);
-            }
-        );
 
         // A group powerUps to update
         this.powerUps = this.add.group();
 
-        // The map has an object layer with 'modifiers' that do 'stuff', see below
-        this.map.getObjectLayer('modifiers').objects.forEach((modifier) => {
-            let tile, properties, type;
-            // Get property stuff from the tile if present or just from the object layer directly
-            if (typeof modifier.gid !== 'undefined') {
-                properties = this.tileset.tileProperties[modifier.gid - 1];
-                type = properties.type;
-                if (properties.hasOwnProperty('powerUp')) {
-                    type = 'powerUp';
-                }
-            } else {
-                type = modifier.properties.type;
-            }
-
-            switch (type) {
-                case 'powerUp':
-                    // Modifies a questionmark below the modifier to contain something else than the default (coin)
-                    tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16 - 1);
-                    tile.powerUp = properties.powerUp;
-                    tile.properties.callback = 'questionMark';
-                    if (!tile.collides) {
-                        // Hidden block without a question mark
-                        tile.setCollision(false, false, false, true);
-                    }
-                    break;
-                case 'pipe':
-                    // Adds info on where to go from a pipe under the modifier
-                    tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16);
-                    tile.properties.dest = parseInt(modifier.properties.goto);
-                    break;
-                case 'dest':
-                    // Adds a destination so that a pipe can find it
-                    this.destinations[modifier.properties.id] = {
-                        x: modifier.x + modifier.width / 2,
-                        top: (modifier.y < 16)
-                    };
-                    break;
-                case 'room':
-                    // Adds a 'room' that is just info on bounds so that we can add sections below pipes 
-                    // in an level just using one tilemap.
-                    this.rooms.push({
-                        x: modifier.x,
-                        width: modifier.width,
-                        sky: modifier.properties.sky
-                    });
-                    break;
-            }
-
-        });
+        // Populate enemyGroup, powerUps, pipes and destinations from object layers
+        this.parseObjectLayers();
 
         // this.keys will contain all we need to control Mario.
         // Any key could just replace the default (like this.key.jump)
@@ -171,12 +86,9 @@ class GameScene extends Phaser.Scene {
             jump2: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
         };
 
-        this.cameras.main.setBounds(0, 0, this.groundLayer.width * this.groundLayer.scaleX, this.groundLayer.height * this.groundLayer.scaleY);
-        this.cameras.main.startFollow(this.mario);
-        //this.cameras.main.setBackgroundColor('#6888ff'); //Blue sky
 
         // An emitter for bricks when blocks are destroyed.
         this.blockEmitter = this.add.particles('mario-sprites');
@@ -242,8 +154,7 @@ class GameScene extends Phaser.Scene {
         }
         this.finishLine.flag.play('flag');
 
-        // Set bounds for current room
-        this.mario.setRoomBounds(this.rooms);
+
 
         // Touch controls is really just a quick hack to try out performance on mobiles,
         // It's not itended as a suggestion on how to do it in a real game.
@@ -259,7 +170,7 @@ class GameScene extends Phaser.Scene {
             down: false,
             jump: false,
             visible: false
-        }
+        };
         jumpButton.setScrollFactor(0, 0);
         jumpButton.alpha = 0;
         jumpButton.setInteractive();
@@ -308,6 +219,19 @@ class GameScene extends Phaser.Scene {
         // If the game ended while physics was disabled
         this.physics.world.resume();
 
+        // CREATE MARIO!!!
+        this.mario = new Mario({
+            scene: this,
+            key: 'mario',
+            x: 16 * 6,
+            y: this.sys.game.config.height - 48 - 48
+        });
+
+        // Set bounds for current room
+        this.mario.setRoomBounds(this.rooms);
+        
+        // The camera should follow Mario
+        this.cameras.main.startFollow(this.mario);
 
     }
 
@@ -620,6 +544,89 @@ class GameScene extends Phaser.Scene {
             });
         }
         this.recordedKeys = keys;
+    }
+
+    parseObjectLayers() {
+        // The map has one object layer with enemies as stamped tiles, 
+        // each tile has properties containing info on what enemy it represents.
+        this.map.getObjectLayer('enemies').objects.forEach(
+            (enemy) => {
+                let enemyObject;
+                switch (this.tileset.tileProperties[enemy.gid - 1].name) {
+                    case 'goomba':
+                        enemyObject = new Goomba({
+                            scene: this,
+                            key: 'sprites16',
+                            x: enemy.x,
+                            y: enemy.y
+                        });
+                        break;
+                    case 'turtle':
+                        enemyObject = new Turtle({
+                            scene: this,
+                            key: 'mario-sprites',
+                            x: enemy.x,
+                            y: enemy.y
+                        });
+                        break;
+                    default:
+                        console.error('Unknown:', this.tileset.tileProperties[enemy.gid - 1]);
+                        break;
+                }
+                this.enemyGroup.add(enemyObject);
+            }
+        );
+
+
+        // The map has an object layer with 'modifiers' that do 'stuff', see below
+        this.map.getObjectLayer('modifiers').objects.forEach((modifier) => {
+            let tile, properties, type;
+
+            // Get property stuff from the tile if present or just from the object layer directly
+            if (typeof modifier.gid !== 'undefined') {
+                properties = this.tileset.tileProperties[modifier.gid - 1];
+                type = properties.type;
+                if (properties.hasOwnProperty('powerUp')) {
+                    type = 'powerUp';
+                }
+            } else {
+                type = modifier.properties.type;
+            }
+
+            switch (type) {
+                case 'powerUp':
+                    // Modifies a questionmark below the modifier to contain something else than the default (coin)
+                    tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16 - 1);
+                    tile.powerUp = properties.powerUp;
+                    tile.properties.callback = 'questionMark';
+                    if (!tile.collides) {
+                        // Hidden block without a question mark
+                        tile.setCollision(false, false, false, true);
+                    }
+                    break;
+                case 'pipe':
+                    // Adds info on where to go from a pipe under the modifier
+                    tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16);
+                    tile.properties.dest = parseInt(modifier.properties.goto);
+                    break;
+                case 'dest':
+                    // Adds a destination so that a pipe can find it
+                    this.destinations[modifier.properties.id] = {
+                        x: modifier.x + modifier.width / 2,
+                        top: (modifier.y < 16)
+                    };
+                    break;
+                case 'room':
+                    // Adds a 'room' that is just info on bounds so that we can add sections below pipes 
+                    // in an level just using one tilemap.
+                    this.rooms.push({
+                        x: modifier.x,
+                        width: modifier.width,
+                        sky: modifier.properties.sky
+                    });
+                    break;
+            }
+        });
     }
 
     cleanUp() {
