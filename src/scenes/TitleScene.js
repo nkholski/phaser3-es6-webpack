@@ -38,7 +38,7 @@ class TitleScene extends Phaser.Scene {
 
         } else {
             // Landscape
-            console.log('landscape')
+            console.log('landscape');
             cw = sh / 0.6;
             ch = sh;
         }
@@ -52,8 +52,8 @@ class TitleScene extends Phaser.Scene {
         this.blink = 1000;
 
         this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-
     }
+
     update(time, delta) {
         if (this.registry.get('restartScene')) {
             this.restartScene();
@@ -72,8 +72,8 @@ class TitleScene extends Phaser.Scene {
             this.scene.start('GameScene');
 
         }
-
     }
+    
     restartScene() {
         //        this.attractMode.stop();
         this.scene.stop('GameScene');
