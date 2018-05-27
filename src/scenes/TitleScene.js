@@ -1,24 +1,25 @@
 class TitleScene extends Phaser.Scene {
     constructor(test) {
-      super({
-        key: 'TitleScene'
-      });
+        super({
+            key: 'TitleScene'
+        });
     }
-    preload()
-    {
+    preload() {
         this.load.atlas('mario-sprites', 'assets/mario-sprites.png', 'assets/mario-sprites.json');
     }
-    create()
-    {
+    create() {
         let config = {
             key: 'title',
-            frames: [{ frame: 'title', key: 'mario-sprites' }],
+            frames: [{
+                frame: 'title',
+                key: 'mario-sprites'
+            }]
         };
         this.anims.create(config);
-    
-        this.title = this.add.sprite(this.sys.game.config.width/2, 16*5);
-        this.title.play("title");
-        this.attractMode = this.scene.launch('MarioBrosScene');
+
+        this.title = this.add.sprite(this.sys.game.config.width / 2, 16 * 5);
+        this.title.play('title');
+        this.attractMode = this.scene.launch('GameScene');
         console.log(this.attractMode.stop);
 
         this.scene.bringToTop();
@@ -30,56 +31,53 @@ class TitleScene extends Phaser.Scene {
         let sw = window.screen.availWidth;
         let ch = 0;
         let cw = 0;
-        if(sh/sw > 0.6) {
+        if (sh / sw > 0.6) {
             // Portrait
             cw = sw;
-            ch = sw*0.6;
+            ch = sw * 0.6;
 
-        }
-        else {
+        } else {
             // Landscape
-            console.log("landscape")
-            cw = sh/0.6;
+            console.log('landscape')
+            cw = sh / 0.6;
             ch = sh;
         }
         let el = document.getElementsByTagName('canvas')[0];
         console.log(el);
-        el.style.width = cw*0.8+"px";
-        el.style.height = ch*0.8+"px";
-        console.log(cw,ch);
+        el.style.width = cw * 0.8 + 'px';
+        el.style.height = ch * 0.8 + 'px';
+        console.log(cw, ch);
 
-        this.pressX = this.add.bitmapText(16 * 8+4, 8*16, 'font', "PRESS X TO START", 8);
+        this.pressX = this.add.bitmapText(16 * 8 + 4, 8 * 16, 'font', 'PRESS X TO START', 8);
         this.blink = 1000;
 
         this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-        
+
     }
-    update(time, delta)
-    {
-        if(this.registry.get('restartScene')){
+    update(time, delta) {
+        if (this.registry.get('restartScene')) {
             this.restartScene();
 
         }
-        this.blink-=delta;
-        if(this.blink<0){
+        this.blink -= delta;
+        if (this.blink < 0) {
             this.pressX.alpha = this.pressX.alpha === 1 ? 0 : 1;
             this.blink = 500;
         }
 
-        if(!this.registry.get('attractMode')){
-        }
-        if(this.startKey.isDown){
-            this.scene.stop('MarioBrosScene');
+        if (!this.registry.get('attractMode')) {}
+        if (this.startKey.isDown) {
+            this.scene.stop('GameScene');
             this.registry.set('attractMode', false);
-            this.scene.start('MarioBrosScene');
+            this.scene.start('GameScene');
 
         }
 
     }
-    restartScene(){
+    restartScene() {
         //        this.attractMode.stop();
-        this.scene.stop('MarioBrosScene');
-        this.scene.launch('MarioBrosScene');
+        this.scene.stop('GameScene');
+        this.scene.launch('GameScene');
         this.scene.bringToTop();
 
         this.registry.set('restartScene', false);

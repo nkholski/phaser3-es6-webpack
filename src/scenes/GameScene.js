@@ -1,15 +1,15 @@
-import Mario from './sprites/Mario';
-import Goomba from './sprites/Goomba';
-import Turtle from './sprites/Turtle';
-import PowerUp from './sprites/PowerUp';
-import SMBTileSprite from './sprites/SMBTileSprite';
-import makeAnimations from './helpers/animations';
+import Mario from '../sprites/Mario';
+import Goomba from '../sprites/Goomba';
+import Turtle from '../sprites/Turtle';
+import PowerUp from '../sprites/PowerUp';
+import SMBTileSprite from '../sprites/SMBTileSprite';
+import makeAnimations from '../helpers/animations';
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles.min.js';
 
-class MarioBrosScene extends Phaser.Scene {
+class GameScene extends Phaser.Scene {
     constructor(test) {
         super({
-            key: 'MarioBrosScene'
+            key: 'GameScene'
         });
     }
 
@@ -332,7 +332,7 @@ class MarioBrosScene extends Phaser.Scene {
                 this.registry.set('restartScene', true);
 
                 //this.scene.stop();
-                //this.scene.switch('MarioBrosScene');
+                //this.scene.switch('GameScene');
                 //this.create();
                 console.log("RESET");
                 //        this.mario.y = this.sys.game.config.height - 48 -48
@@ -653,4 +653,4 @@ class MarioBrosScene extends Phaser.Scene {
     }
 }
 
-export default MarioBrosScene;
+export default GameScene;

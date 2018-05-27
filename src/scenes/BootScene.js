@@ -9,7 +9,6 @@ class BootScene extends Phaser.Scene {
        
         // Register a load progress event to show a load bar
         this.load.on('progress', (value) => {
-            console.log('progress', value);
             progress.clear();
             progress.fillStyle(0xffffff, 1);
             progress.fillRect(0, this.sys.game.config.height / 2, this.sys.game.config.width * value, 60);
