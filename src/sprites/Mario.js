@@ -222,8 +222,6 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
     resize(large) {
         this.scene.physics.world.pause();
-
-
         if (large) {
             this.large();
             this.animSuffix = 'Super';
@@ -234,7 +232,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             this.play('shrink');
         }
         this.on('animationcomplete', () => {
-            if (this.scene.physics.world.isPaused) {
+            if (this.anims.currentAnim.key === 'grow' || this.anims.currentAnim.key === 'shrink') {
                 this.scene.physics.world.resume();
             }
         }, this);
