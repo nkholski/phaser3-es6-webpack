@@ -113,30 +113,8 @@ class GameScene extends Phaser.Scene {
             scene: this,
         })
 
-        // Hack to get sprite's destroy method to function.
-        this.sys.physicsManager = this.physics.world;
 
-
-        let hud = this.add.bitmapText(5 * 8, 8, 'font', 'MARIO                      TIME', 8);
-        hud.setScrollFactor(0, 0);
-        this.levelTimer = {
-            textObject: this.add.bitmapText(36 * 8, 16, 'font', '255', 8),
-            time: 150 * 1000,
-            displayedTime: 255,
-            hurry: false
-        }
-        this.levelTimer.textObject.setScrollFactor(0, 0);
-        this.score = {
-            pts: 0,
-            textObject: this.add.bitmapText(5 * 8, 16, 'font', '000000', 8)
-        }
-        this.score.textObject.setScrollFactor(0, 0);
-
-        if (this.attractMode) {
-            hud.alpha = 0;
-            this.levelTimer.textObject.alpha = 0;
-            this.score.textObject.alpha = 0;
-        }
+        this.createHUD();
 
         // Prepare the finishLine
         let worldEndAt = -1;
@@ -206,13 +184,9 @@ class GameScene extends Phaser.Scene {
         });
         window.toggleTouch = this.toggleTouch.bind(this);
 
-        this.cameras.main.roundPixels = true;
 
-        // Hide stuff while in attract mode
+        // Mute music while in attract mode
         if (this.attractMode) {
-            hud.alpha = 0;
-            this.levelTimer.textObject.alpha = 0;
-            this.score.textObject.alpha = 0;
             this.music.volume = 0;
         }
 
@@ -229,10 +203,11 @@ class GameScene extends Phaser.Scene {
 
         // Set bounds for current room
         this.mario.setRoomBounds(this.rooms);
-        
+
         // The camera should follow Mario
         this.cameras.main.startFollow(this.mario);
 
+        this.cameras.main.roundPixels = true;
     }
 
     update(time, delta) {
@@ -627,6 +602,30 @@ class GameScene extends Phaser.Scene {
                     break;
             }
         });
+    }
+
+    createHUD() {
+        const hud = this.add.bitmapText(5 * 8, 8, 'font', 'MARIO                      TIME', 8);
+        hud.setScrollFactor(0, 0);
+        this.levelTimer = {
+            textObject: this.add.bitmapText(36 * 8, 16, 'font', '255', 8),
+            time: 150 * 1000,
+            displayedTime: 255,
+            hurry: false
+        }
+        this.levelTimer.textObject.setScrollFactor(0, 0);
+        this.score = {
+            pts: 0,
+            textObject: this.add.bitmapText(5 * 8, 16, 'font', '000000', 8)
+        }
+        this.score.textObject.setScrollFactor(0, 0);
+
+        if (this.attractMode) {
+            hud.alpha = 0;
+            this.levelTimer.textObject.alpha = 0;
+            this.score.textObject.alpha = 0;
+        }
+
     }
 
     cleanUp() {

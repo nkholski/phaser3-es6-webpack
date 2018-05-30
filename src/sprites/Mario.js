@@ -25,15 +25,11 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     }
 
     update(keys, time, delta) {
-
-        // If Mario falls down a cliff or died, just let him drop from the sky and prentend like nothing happened
-
-
         if (this.y > 2040) {
             // Really superdead, has been falling for a while.
             this.scene.scene.start('TitleScene');
 
-
+            // If Mario falls down a cliff or died, just let him drop from the sky and prentend like nothing happened
             //this.y = -32;
             //if(this.x<16){
             //  this.x = 16;
@@ -158,7 +154,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         }
 
         anim += this.animSuffix;
-        if (this.anims.currentAnim.key !== anim) {
+        if (this.anims.currentAnim.key !== anim && !this.scene.physics.world.isPaused) {
             this.anims.play(anim);
         }
 
@@ -226,13 +222,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
     resize(large) {
         this.scene.physics.world.pause();
-        this.on('animationcomplete', () => {
-            if (this.scene.physics.world.isPaused) {
-                console.log(this.scene.physics.world);
 
-                this.scene.physics.world.resume();
-            }
-        }, this);
 
         if (large) {
             this.large();
@@ -243,7 +233,11 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             this.animSuffix = '';
             this.play('shrink');
         }
-
+        this.on('animationcomplete', () => {
+            if (this.scene.physics.world.isPaused) {
+                this.scene.physics.world.resume();
+            }
+        }, this);
     }
 
     small() {

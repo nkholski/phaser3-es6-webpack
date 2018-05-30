@@ -1,5 +1,13 @@
 ## Kind of a changelog
 
+#### 2018-05-30
+- Forgot this had a changelog. Stuff such as title screen and attract mode was done without a note.
+- Phaser 3.9.0 and Animated Tiles 2.0.2
+- Added touch on title screen (touch controls during game play was already implemented but never reached after title screen was added :-/)
+- Fixed pixel art
+- Broke Attract Mode. Something physics related changed in Phaser and the json recording I use just don't work anymore.
+- Reorganized the code base and started to make it cleaner.
+
 #### 2018-02-04
 - Added a flag in the end of the level
 - Fixed volume for sound effects
