@@ -22,7 +22,7 @@ export default class Goomba extends Enemy {
       return;
     }
     // Collide with Mario!
-    this.scene.physics.world.overlap(this, this.mario, this.marioHit);
+    this.scene.physics.world.overlap(this, this.scene.mario, this.marioHit);
     // The Goomba stopped, better try to walk in the other direction.
     if(this.body.velocity.x === 0) {
       this.direction = -this.direction;
