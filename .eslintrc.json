@@ -33,7 +33,7 @@
 
     "array-bracket-spacing": ["error", "always"],
     "block-spacing": ["error", "always"],
-    "brace-style": ["error", "allman", {
+    "brace-style": ["error", "stroustrup", {
       "allowSingleLine": true
     }],
     "camelcase": "error",
@@ -60,6 +60,11 @@
       "allowBlockEnd": false,
       "allowObjectStart": true,
       "allowArrayStart": true
+    }],
+    "space-before-function-paren": ["never", {
+      "anonymous": "always",
+      "named": "always",
+      "asyncArrow": "always"
     }],
     "new-parens": "error",
     "no-array-constructor": "error",

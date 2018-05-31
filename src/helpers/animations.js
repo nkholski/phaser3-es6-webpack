@@ -91,7 +91,7 @@ export default function makeAnimations(scene) {
     scene.anims.create(config);
     config = {
         key: 'goomba',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 4, end: 5 }),
+        frames: scene.anims.generateFrameNames('mario-sprites', { prefix: 'goomba/walk', start: 1, end: 2 }),
         frameRate: 5,
         repeat: -1,
         repeatDelay: 0
@@ -99,7 +99,7 @@ export default function makeAnimations(scene) {
     scene.anims.create(config);
     config = {
         key: 'goombaFlat',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 6, end: 6 }),
+        frames: [{ key: "mario-sprites", frame: 'goomba/flat' }],
     };
     scene.anims.create(config);
     config = {
@@ -145,28 +145,32 @@ export default function makeAnimations(scene) {
 
     config = {
         key: 'mushroom',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 2, end: 2 }),
-        frameRate: 10,
+        frames: [{ frame: 'powerup/super', key: 'mario-sprites' }],
+
+    };
+    scene.anims.create(config);
+
+    config = {
+        key: 'coin',
+        frames: scene.anims.generateFrameNames('mario-sprites', { prefix: 'coin/spin', start: 1, end: 4 }),
+        frameRate: 30,
         repeat: -1,
         repeatDelay: 0
     };
     scene.anims.create(config);
 
     config = {
-        key: 'coin',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 3, end: 3 }),
-    };
-    scene.anims.create(config);
-
-    config = {
         key: '1up',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 0, end: 0 }),
+        frames: [{ frame: 'powerup/1up', key: 'mario-sprites' }],
     };
     scene.anims.create(config);
 
     config = {
         key: 'star',
-        frames: scene.anims.generateFrameNumbers('sprites16', { start: 1, end: 1 }),
+        frames: scene.anims.generateFrameNames('mario-sprites', { prefix: 'powerup/star', start: 1, end: 4 }),
+        frameRate: 30,
+        repeat: -1,
+        repeatDelay: 0    
     };
     scene.anims.create(config);
     config = {

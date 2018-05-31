@@ -54,9 +54,6 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             this.scene.physics.world.collide(this, this.scene.groundLayer);
         }
 
-
-
-
         if (this.wasHurt > 0) {
             this.wasHurt -= delta;
             this.flashToggle = !this.flashToggle;
@@ -143,12 +140,12 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             anim = 'run';
             if ((input.left || input.right) && ((this.body.velocity.x > 0 && this.body.acceleration.x < 0) || (this.body.velocity.x < 0 && this.body.acceleration.x > 0))) {
                 anim = 'turn';
-            } else if (this.animSuffix != '' && input.down && !(input.right || input.left)) {
+            } else if (this.animSuffix !== '' && input.down && !(input.right || input.left)) {
                 anim = 'bend';
             }
         } else {
             anim = 'stand';
-            if (this.animSuffix != '' && input.down && !(input.right || input.left)) {
+            if (this.animSuffix !== '' && input.down && !(input.right || input.left)) {
                 anim = 'bend';
             }
         }
@@ -246,7 +243,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         this.body.setSize(10, 22);
         this.body.offset.set(3, 10);
     }
-    
+
     die() {
         this.scene.music.pause();
         this.play('death');
