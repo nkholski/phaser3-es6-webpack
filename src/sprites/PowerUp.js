@@ -13,11 +13,28 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
 
         // Standard sprite is 16x16 pixels with a smaller body
         this.body.setSize(12, 12);
-        this.body.offset.set(2, 4);
+        //this.body.offset.set(2, 4);
+
+        if(this.type === 'mushroom' && this.scene.mario.animSuffix !== ""){
+            this.type = 'flower';
+        }
 
         if (this.type === 'mushroom' || this.type === '1up') {
             this.body.velocity.y = -150;
-        } else if (this.type === 'coin') {
+
+        } else if(this.type === 'flower'){
+            this.setDepth(-100);
+            this.body.allowGravity = false;
+            this.body.setVelocity(0, 0);
+            this.direction = 0;
+            this.y+=16;
+            this.scene.tweens.add({
+                targets: this,
+                y: this.y - 16,
+                duration: 300
+            });
+        }        
+        else if (this.type === 'coin') {
             this.body.setVelocity(0, 0);
             this.body.allowGravity = false;
             this.scene.tweens.add({
@@ -69,7 +86,14 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
     }
 
     collected(powerUp, mario) {
+        if(mario.animSuffix==='' && powerUp.type==='flower'){
+            powerUp.type = 'mushroom';
+        }
         switch (powerUp.type) {
+            case 'flower':
+                mario.animSuffix = "Fire";
+                powerUp.scene.sound.playAudioSprite('sfx', 'smb_powerup');
+                break;
             case 'mushroom':
                 // Powerup will not be removed until next loop after physics is running again
                 // (physics is paused by mario.resize), until then we'll just hide it.

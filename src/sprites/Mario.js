@@ -8,6 +8,10 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         this.body.maxVelocity.y = 500;
         this.animSuffix = '';
         this.small();
+
+        this.animSuffix = 'Super';
+        this.large();
+
         this.bending = false;
         this.wasHurt = -1;
         this.flashToggle = false;
@@ -22,6 +26,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         this.type = 'mario';
         this.jumpTimer = 0;
         this.jumping = false;
+        this.fireCoolDown = 0;
     }
 
     update(keys, time, delta) {
@@ -46,6 +51,8 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         if (this.enteringPipe || !this.alive) {
             return;
         }
+
+        this.fireCoolDown -= delta;
 
         // Just run callbacks when hitting something from below or trying to enter it
         if (this.body.velocity.y < 0 || this.bending) {
@@ -75,13 +82,23 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         }
 
 
-        //
         let input = {
             left: keys.left.isDown || this.scene.touchControls.left,
             right: keys.right.isDown || this.scene.touchControls.right,
             down: keys.down.isDown || this.scene.touchControls.down,
             jump: keys.jump.isDown || keys.jump2.isDown || this.scene.touchControls.jump,
+            fire: keys.fire.isDown
         }
+
+
+        if (input.fire && this.animSuffix !== "Fire" && this.fireCoolDown < 0) {
+            let fireball = this.scene.fireballs.get(this);
+            if (fireball) {
+                fireball.fire(this.x, this.y, this.flipX);
+                this.fireCoolDown = 100;
+            }
+        }
+
 
         //this.angle++
         //  console.log(this.body.velocity.y);

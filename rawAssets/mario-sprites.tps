@@ -4,9 +4,9 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>4.3.1</string>
+        <string>4.6.1</string>
         <key>fileName</key>
-        <string>/home/niklas/Projekt/temp/phaser3-es6-webpack/rawAssets/mario-sprites.tps</string>
+        <string>/home/niklas/projekt/mario2.8.0/rawAssets/mario-sprites.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -172,6 +172,8 @@
         <true/>
         <key>prependSmartFolderName</key>
         <false/>
+        <key>autodetectAnimations</key>
+        <true/>
         <key>globalSpriteSettings</key>
         <struct type="SpriteSettings">
             <key>scale</key>

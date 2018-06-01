@@ -4,6 +4,7 @@ import Turtle from '../sprites/Turtle';
 import PowerUp from '../sprites/PowerUp';
 import SMBTileSprite from '../sprites/SMBTileSprite';
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles.min.js';
+import Fire from '../sprites/Fire';
 
 class GameScene extends Phaser.Scene {
     constructor(test) {
@@ -84,6 +85,7 @@ class GameScene extends Phaser.Scene {
         this.keys = {
             jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
             jump2: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
+            fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
@@ -208,11 +210,27 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.mario);
 
         this.cameras.main.roundPixels = true;
+
+
+
+        this.fireballs = this.add.group({
+            classType: Fire,
+            maxSize: 10,
+            runChildUpdate: false // Due to https://github.com/photonstorm/phaser/issues/3724
+        });
+
     }
 
     update(time, delta) {
         // Avoid running updates when physics is paused
         this.record(delta);
+        //this.fireballs.children.forEach((fire)=>{
+        //    fire.update(time, delta);
+        //})
+        Array.from(this.fireballs.children.entries).forEach(
+            (fireball) => 
+            {fireball.update(time, delta);
+        });
 
         /* console.log(time);*/
         if (this.attractMode) {
@@ -258,6 +276,9 @@ class GameScene extends Phaser.Scene {
                 down: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.down
                 },
+                fire: {
+                    isDown: false
+                }
 
             }
         }

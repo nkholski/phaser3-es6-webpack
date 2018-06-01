@@ -21,32 +21,42 @@ A messy list of things I used from the Phaser API. I'll try to improve this, but
 
 **Preloader**
 - image, tilemapTiledJSON, spritesheet, atlas, audio, audiosprite, bitmapFont, plugin
+
 **Input**
 - Phaser.Input.Keyboard
 - Touch controls
+
 **Audio**
 - Audioatlas (including some event listeners)
 - Music (pause/resume/rate)
+
 **Animations**
 - Animating sprites
+
 **Tilemaps**
 - Multiple layers
 - Dynamic layers
 - Animated tiles (Plugin: https://github.com/nkholski/phaser-animated-tiles)
 - Object layers are used to manipulate the map, define areas and add enemies. 
+
 **Tilesprite**
 - Background clouds
+
 **Sprites**
-All sprites are ES6 extensions of native Phaser.Sprite
+- All sprites are ES6 extensions of native Phaser.Sprite
+
 **Physics**
 - Acceleration
 - body sizes
 - pause
 - collisions and overlap sprite/sprite and sprite/tilemaplayer
+
 **Groups**
 - Sprites are put in groups
+
 **BitmapText**
 - For score and timer
+
 **Tweens**
 - entering pipes, ending the world etc.
 
