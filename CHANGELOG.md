@@ -1,5 +1,8 @@
 ## Kind of a changelog
 
+#### 2018-06-01
+- Fire flowers and fire balls in a pool. Nice
+
 #### 2018-05-30
 - Forgot this had a changelog. Stuff such as title screen and attract mode was done without a note.
 - Phaser 3.9.0 and Animated Tiles 2.0.2

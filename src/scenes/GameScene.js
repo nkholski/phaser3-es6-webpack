@@ -222,8 +222,10 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        // Avoid running updates when physics is paused
-        this.record(delta);
+        if(!this.attractMode){
+            this.record(delta);
+
+        }
         //this.fireballs.children.forEach((fire)=>{
         //    fire.update(time, delta);
         //})
@@ -258,7 +260,6 @@ class GameScene extends Phaser.Scene {
                 this.mario.x = this.attractMode.recording[this.attractMode.current].x;
                 this.mario.y = this.attractMode.recording[this.attractMode.current].y;
                 this.mario.body.setVelocity(this.attractMode.recording[this.attractMode.current].vx, this.attractMode.recording[this.attractMode.current].vy);
-
             }
             this.keys = {
                 jump: {
@@ -277,7 +278,7 @@ class GameScene extends Phaser.Scene {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.down
                 },
                 fire: {
-                    isDown: false
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.fire
                 }
 
             }
@@ -502,12 +503,13 @@ class GameScene extends Phaser.Scene {
     }
 
     record(delta) {
-        let update;
+        let update = false;
         let keys = {
-            jump: this.keys.jump.isDown,
+            jump: this.keys.jump.isDown || this.keys.jump2.isDown,
             left: this.keys.left.isDown,
             right: this.keys.right.isDown,
             down: this.keys.down.isDown,
+            fire: this.keys.fire.isDown,
         }
         if (typeof (recording) === 'undefined') {
             console.log('DEFINE')
@@ -515,15 +517,13 @@ class GameScene extends Phaser.Scene {
             window.time = 0;
             this.recordedKeys = {};
             update = true;
-        } else if (window.recording.length === 1) {
-            update = false;
-        } else {
+        }  else {
             update = (time - recording[recording.length - 1].time) > 200; // update at least 5 times per second
         }
         time += delta;
         if (!update) {
             // update if keys changed
-            ['jump', 'left', 'right', 'down'].forEach((dir) => {
+            ['jump', 'left', 'right', 'down', 'fire'].forEach((dir) => {
                 if (keys[dir] != this.recordedKeys[dir]) {
                     update = true;
                 }

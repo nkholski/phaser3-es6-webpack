@@ -22,72 +22,53 @@ export default function makeAnimations(scene) {
 
 
 
-    // Mario
-    //['','Super','Fire'].forEach
-    let suffix = 'Fire';
-    config = {
-        key: 'run'+suffix,
-        frames: scene.anims.generateFrameNames('mario-sprites', {
-            prefix: 'mario/walk'+suffix,
+    // Mario animations: One without suffix, super after mushroom and fire after flower
+    ['', 'Super', 'Fire'].forEach((suffix) => {
+        config = {
+            key: 'run' + suffix,
+            frames: scene.anims.generateFrameNames('mario-sprites', {
+                prefix: 'mario/walk' + suffix,
+                start: 1,
+                end: 3
+            }),
+            frameRate: 10,
+            repeat: -1,
+            repeatDelay: 0
+        };
+        scene.anims.create(config);
+        // Jump, Stand and Turn: one frame each
+        ["jump", 'stand', 'turn', 'bend'].forEach(
+            
+            (anim) => {
+                if(anim==='bend' && suffix === ''){
+                    // No bend animation when Mario is small
+                    return;
+                }
+                config.key = anim + suffix;
+                config.frames = [{
+                        frame: 'mario/' + anim + suffix,
+                        key: 'mario-sprites'
+                    }],
+                    scene.anims.create(config);
+            }
+        );
+        // Climb
+        config.key = 'climb' + suffix;
+        config.frames = scene.anims.generateFrameNames('mario-sprites', {
+            prefix: 'mario/climb' + suffix,
             start: 1,
-            end: 3
-        }),
-        frameRate: 10,
-        repeat: -1,
-        repeatDelay: 0
-    };
-    scene.anims.create(config);
-    // Jump
-    config.key = 'jump'+suffix;
-    config.frames = [{
-        frame: 'mario/jump'+suffix,
-        key: 'mario-sprites'
-    }],
-    scene.anims.create(config);
-    // Stand
-    config.key = 'stand'+suffix;
-    config.frames = [{
-        frame: 'mario/stand'+suffix,
-        key: 'mario-sprites'
-    }],
-    scene.anims.create(config);
-
-
-
-
-    config = {
-        key: 'runSuper',
-        frames: scene.anims.generateFrameNumbers('mario', {
-            start: 0,
-            end: 2,
-            first: 0
-        }),
-        frameRate: 10,
-        repeat: -1,
-        repeatDelay: 0
-    };
-    scene.anims.create(config);
-
-    config.key = "run";
-    config.frames = scene.anims.generateFrameNumbers('mario', {
-            start: 17,
-            end: 19
-        }),
+            end: 2
+        });
         scene.anims.create(config);
-    config = {
-        key: 'jumpSuper',
-        frames: scene.anims.generateFrameNumbers('mario', {
-            start: 4,
-            end: 4
-        }),
-    };
-    scene.anims.create(config);
-    config.key = "jump";
-    config.frames = scene.anims.generateFrameNumbers('mario', {
-            start: 21,
-            end: 21
-        }),
+        // Swim
+        config.key = 'swim' + suffix;
+        config.frames = scene.anims.generateFrameNames('mario-sprites', {
+            prefix: 'mario/swim' + suffix,
+            start: 1,
+            end: 6
+        });
         scene.anims.create(config);
+    });
 
     config.key = "death";
     config.frames = scene.anims.generateFrameNumbers('mario', {
@@ -95,61 +76,6 @@ export default function makeAnimations(scene) {
             end: 22
         }),
         scene.anims.create(config);
-
-
-
-    config = {
-        key: 'standSuper',
-        frames: scene.anims.generateFrameNumbers('mario', {
-            start: 6,
-            end: 6,
-            first: 6
-        }),
-    };
-    scene.anims.create(config);
-
-    config.key = "stand";
-    config.frames = scene.anims.generateFrameNumbers('mario', {
-            start: 23,
-            end: 23
-        }),
-        scene.anims.create(config);
-
-    config = {
-        key: 'turnSuper',
-        frames: scene.anims.generateFrameNumbers('mario', {
-            start: 3,
-            end: 3,
-            first: 3
-        }),
-    };
-    scene.anims.create(config);
-    config.key = "turn";
-    config.frames = scene.anims.generateFrameNumbers('mario', {
-            start: 20,
-            end: 20
-        }),
-        scene.anims.create(config);
-    config.key = "bendSuper";
-    config.frames = [{
-            key: "mario-sprites",
-            frame: 'mario/bend'
-        }],
-        scene.anims.create(config);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Didn't find a good way to create an animation with frame names without a pattern.
     let frames = [];
@@ -161,14 +87,10 @@ export default function makeAnimations(scene) {
             });
         }
     );
-    // scene is actually pretty cool. The powerup pauses physics and the animation onComplete-callback resumes it.
     config = {
         key: "grow",
         frames: frames,
         frameRate: 10,
-        onComplete: () => {
-            scene.physics.world.resume();
-        },
         repeat: 0,
         repeatDelay: 0
     };
@@ -177,13 +99,13 @@ export default function makeAnimations(scene) {
         key: "shrink",
         frames: frames.reverse(),
         frameRate: 10,
-        onComplete: () => {
-            scene.physics.world.resume();
-        },
         repeat: 0,
         repeatDelay: 0
     };
     scene.anims.create(config);
+    // ALL MARIO ANIMATIONS DONE
+
+
     config = {
         key: 'goomba',
         frames: scene.anims.generateFrameNames('mario-sprites', {

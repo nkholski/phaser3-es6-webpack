@@ -9,10 +9,10 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         this.animSuffix = '';
         this.small();
 
-        this.animSuffix = 'Super';
-        this.large();
+        //this.animSuffix = 'Super';
+        //this.large();
 
-        this.bending = false;
+        this.bending =false;
         this.wasHurt = -1;
         this.flashToggle = false;
         this.star = {
@@ -27,6 +27,12 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         this.jumpTimer = 0;
         this.jumping = false;
         this.fireCoolDown = 0;
+
+        this.on('animationcomplete', () => {
+            if (this.anims.currentAnim.key === 'grow' || this.anims.currentAnim.key === 'shrink') {
+                this.scene.physics.world.resume();
+            }
+        }, this);
     }
 
     update(keys, time, delta) {
@@ -91,11 +97,11 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         }
 
 
-        if (input.fire && this.animSuffix !== "Fire" && this.fireCoolDown < 0) {
+        if (input.fire && this.animSuffix === "Fire" && this.fireCoolDown < 0) {
             let fireball = this.scene.fireballs.get(this);
             if (fireball) {
                 fireball.fire(this.x, this.y, this.flipX);
-                this.fireCoolDown = 100;
+                this.fireCoolDown = 300;
             }
         }
 
@@ -245,16 +251,11 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             this.animSuffix = '';
             this.play('shrink');
         }
-        this.on('animationcomplete', () => {
-            if (this.anims.currentAnim.key === 'grow' || this.anims.currentAnim.key === 'shrink') {
-                this.scene.physics.world.resume();
-            }
-        }, this);
     }
 
     small() {
         this.body.setSize(10, 10);
-        this.body.offset.set(3, 22);
+        this.body.offset.set(3, 14);
     }
     large() {
         this.body.setSize(10, 22);
