@@ -1,5 +1,9 @@
 ## Kind of a changelog
 
+#### 2018-06-02
+- Webpack 4! 
+- Attract mode is working again, and the online demo was updated
+
 #### 2018-06-01
 - Fire flowers and fire balls in a pool. Nice
 

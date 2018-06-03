@@ -1,6 +1,7 @@
 node_modules/
 dist/
 build/
+dev/
 .vscode/
 .idea
 *.log

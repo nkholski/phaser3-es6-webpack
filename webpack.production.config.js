@@ -39,7 +39,7 @@ module.exports = {
         comments: false
       }
     }),*/
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' /* chunkName= */, filename: 'js/vendor.bundle.js' /* filename= */ }),
+    //new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' /* chunkName= */, filename: 'js/vendor.bundle.js' /* filename= */ }),
     new HtmlWebpackPlugin({
       filename: 'index.html', // path.resolve(__dirname, 'build', 'index.html'),
       template: './src/index.html',
@@ -68,7 +68,7 @@ module.exports = {
       { test: [/\.vert$/, /\.frag$/], use: 'raw-loader' }
     ]
   },
-  node: {
+  /*node: {
     fs: 'empty',
     net: 'empty',
     tls: 'empty'
@@ -78,5 +78,5 @@ module.exports = {
       'phaser': phaser,
 
     }
-  }
+  }*/
 }
