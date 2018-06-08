@@ -59,7 +59,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       { from: 'assets', to: 'assets' }
-    ])
+    ]),
+    
   ],
   module: {
     rules: [
@@ -68,6 +69,9 @@ module.exports = {
       { test: [/\.vert$/, /\.frag$/], use: 'raw-loader' }
     ]
   },
+  optimization: {
+    minimize: true
+  }
   /*node: {
     fs: 'empty',
     net: 'empty',
