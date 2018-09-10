@@ -1,5 +1,10 @@
 ## Kind of a changelog
 
+#### 2018-09-10
+- Phaser 3.12
+- Babel 7
+- Leaving the source code introduced some issues. If you want to help out, check out this thread at HTML5GAMEDEVS: http://www.html5gamedevs.com/topic/35471-generic-platformer-es6-webpack-4-boilerplate/
+
 #### 2018-06-02
 - Webpack 4! 
 - Attract mode is working again, and the online demo was updated
