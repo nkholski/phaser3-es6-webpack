@@ -185,6 +185,14 @@
 	"sourceSize": {"w":16,"h":32}
 },
 {
+	"filename": "mario/bendSuper",
+	"frame": {"x":48,"y":64,"w":16,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":32},
+	"sourceSize": {"w":16,"h":32}
+},
+{
 	"filename": "mario/climb0",
 	"frame": {"x":112,"y":16,"w":16,"h":16},
 	"rotated": false,
