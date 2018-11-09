@@ -25,7 +25,7 @@ class GameScene extends Phaser.Scene {
                 recording: this.sys.cache.json.entries.entries.attractMode,
                 current: 0,
                 time: 0
-            }
+            };
         } else {
             this.attractMode = null;
         }
@@ -91,7 +91,6 @@ class GameScene extends Phaser.Scene {
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
         };
 
-
         // An emitter for bricks when blocks are destroyed.
         this.blockEmitter = this.add.particles('mario-sprites');
 
@@ -107,14 +106,13 @@ class GameScene extends Phaser.Scene {
                 min: -90 - 25,
                 max: -45 - 25
             },
-            frequency: -1,
+            frequency: -1
         });
 
         // Used when hitting a tile from below that should bounce up.
         this.bounceTile = new SMBTileSprite({
-            scene: this,
-        })
-
+            scene: this
+        });
 
         this.createHUD();
 
@@ -131,10 +129,8 @@ class GameScene extends Phaser.Scene {
             x: worldEndAt,
             flag: this.add.sprite(worldEndAt + 8, 4 * 16),
             active: false
-        }
+        };
         this.finishLine.flag.play('flag');
-
-
 
         // Touch controls is really just a quick hack to try out performance on mobiles,
         // It's not itended as a suggestion on how to do it in a real game.
@@ -172,7 +168,7 @@ class GameScene extends Phaser.Scene {
                     console.log('going left');
                     this.touchControls.left = true;
                 } else {
-                    console.log('going right')
+                    console.log('going right');
                     this.touchControls.right = true;
                 }
             } else {
@@ -185,7 +181,6 @@ class GameScene extends Phaser.Scene {
             this.touchControls.down = false;
         });
         window.toggleTouch = this.toggleTouch.bind(this);
-
 
         // Mute music while in attract mode
         if (this.attractMode) {
@@ -211,48 +206,48 @@ class GameScene extends Phaser.Scene {
 
         this.cameras.main.roundPixels = true;
 
-
-
         this.fireballs = this.add.group({
             classType: Fire,
             maxSize: 10,
             runChildUpdate: false // Due to https://github.com/photonstorm/phaser/issues/3724
         });
-
     }
 
     update(time, delta) {
-        if(!this.attractMode){
+        if (!this.attractMode) {
             this.record(delta);
-
         }
-        //this.fireballs.children.forEach((fire)=>{
-        //    fire.update(time, delta);
-        //})
-        Array.from(this.fireballs.children.entries).forEach(
-            (fireball) => 
-            {fireball.update(time, delta);
-        });
 
-        /* console.log(time);*/
+        // this.fireballs.children.forEach((fire)=>{
+        //    fire.update(time, delta);
+        // })
+
+        Array.from(this.fireballs.children.entries).forEach(
+            (fireball) => {
+                fireball.update(time, delta);
+            });
+
+        /* console.log(time); */
         if (this.attractMode) {
             this.attractMode.time += delta;
-            //console.log(this.attractMode.current);
-            //      console.log(this.attractMode.current, this.attractMode.recording.length);
+
+            // console.log(this.attractMode.current);
+            // console.log(this.attractMode.current, this.attractMode.recording.length);
 
             if (this.mario.y > 240 || (this.attractMode.recording.length <= this.attractMode.current + 2) || this.attractMode.current === 14000) {
                 this.attractMode.current = 0;
                 this.attractMode.time = 0;
-                this.mario.x = 16 * 6; // 3500, 
+                this.mario.x = 16 * 6; // 3500,
                 this.tick = 0;
                 this.registry.set('restartScene', true);
 
-                //this.scene.stop();
-                //this.scene.switch('GameScene');
-                //this.create();
+                // this.scene.stop();
+                // this.scene.switch('GameScene');
+                // this.create();
                 console.log('RESET');
-                //        this.mario.y = this.sys.game.config.height - 48 -48
-                //return;
+
+                // this.mario.y = this.sys.game.config.height - 48 -48
+                // return;
             }
 
             if (this.attractMode.time >= this.attractMode.recording[this.attractMode.current + 1].time) {
@@ -280,10 +275,8 @@ class GameScene extends Phaser.Scene {
                 fire: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.fire
                 }
-
-            }
+            };
         }
-
 
         if (this.physics.world.isPaused) {
             return;
@@ -320,8 +313,6 @@ class GameScene extends Phaser.Scene {
             }
         }
 
-
-
         // Run the update method of Mario
         this.mario.update(this.keys, time, delta);
 
@@ -330,17 +321,17 @@ class GameScene extends Phaser.Scene {
             (sprite) => {
                 sprite.update(time, delta);
             }
-        )
+        );
+
         // Run the update method of non-enemy sprites
         this.powerUps.children.entries.forEach(
             (sprite) => {
                 sprite.update(time, delta);
             }
-        )
+        );
     }
 
     tileCollision(sprite, tile) {
-
         if (sprite.type === 'turtle') {
             if (tile.y > Math.round(sprite.y / 16)) {
                 // Turtles ignore the ground
@@ -352,6 +343,7 @@ class GameScene extends Phaser.Scene {
                 sprite.enterPipe(tile.properties.dest, tile.rotation);
             }
         }
+
         // If it's Mario and the body isn't blocked up it can't hit question marks or break bricks
         // Otherwise Mario will break bricks he touch from the side while moving up.
         if (sprite.type === 'mario' && !sprite.body.blocked.up) {
@@ -364,22 +356,28 @@ class GameScene extends Phaser.Scene {
                 case 'questionMark':
                     // Shift to a metallic block
                     tile.index = 44;
+
                     // Bounce it a bit
                     sprite.scene.bounceTile.restart(tile);
+
                     // The questionmark is no more
                     tile.properties.callback = null;
+
                     // Invincible blocks are only collidable from above, but everywhere once revealed
                     tile.setCollision(true);
+
                     // Check powerUp for what to do, make a coin if not defined
                     let powerUp = tile.powerUp ? tile.powerUp : 'coin';
+
                     // Make powerUp (including a coin)
-                    new PowerUp({
+                    (() => new PowerUp({
                         scene: sprite.scene,
                         key: 'sprites16',
                         x: tile.x * 16 + 8,
                         y: tile.y * 16 - 8,
                         type: powerUp
-                    });
+                    }))();
+
                     break;
                 case 'breakable':
                     if (sprite.type === 'mario' && sprite.animSuffix === '') {
@@ -405,14 +403,13 @@ class GameScene extends Phaser.Scene {
                 default:
                     sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
                     break;
-
             }
         } else {
             sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
         }
     }
 
-    /** To be removed, supported natively now:
+    /* * To be removed, supported natively now:
      * setCollisionByProperty(map) {
       Object.keys(map.tilesets[0].tileProperties).forEach(
         (id) => {
@@ -422,7 +419,7 @@ class GameScene extends Phaser.Scene {
           }
         }
       )
-    }*/
+    } */
 
     updateScore(score) {
         this.score.pts += score;
@@ -455,7 +452,7 @@ class GameScene extends Phaser.Scene {
             case 1:
                 let sound = this.sound.addAudioSprite('sfx');
                 sound.on('ended', (sound) => {
-                    /*this.mario.x = 48;
+                    /* this.mario.x = 48;
                     this.mario.y = -32;
                     this.mario.body.setVelocity(0);
                     this.mario.alpha = 1;
@@ -465,7 +462,7 @@ class GameScene extends Phaser.Scene {
                     this.levelTimer.hurry = false;
                     this.levelTimer.time = 150 * 1000;
                     this.levelTimer.displayedTime = 255;
-                    this.physics.world.resume();*/
+                    this.physics.world.resume(); */
                     sound.destroy();
                     this.scene.start('TitleScene');
                 });
@@ -485,7 +482,7 @@ class GameScene extends Phaser.Scene {
                 this.tweens.add({
                     targets: this.mario,
                     alpha: 0,
-                    duration: 500,
+                    duration: 500
                 });
                 break;
         }
@@ -509,22 +506,22 @@ class GameScene extends Phaser.Scene {
             left: this.keys.left.isDown,
             right: this.keys.right.isDown,
             down: this.keys.down.isDown,
-            fire: this.keys.fire.isDown,
-        }
+            fire: this.keys.fire.isDown
+        };
         if (typeof (recording) === 'undefined') {
-            console.log('DEFINE')
+            console.log('DEFINE');
             window.recording = [];
             window.time = 0;
             this.recordedKeys = {};
             update = true;
-        }  else {
+        } else {
             update = (time - recording[recording.length - 1].time) > 200; // update at least 5 times per second
         }
         time += delta;
         if (!update) {
             // update if keys changed
             ['jump', 'left', 'right', 'down', 'fire'].forEach((dir) => {
-                if (keys[dir] != this.recordedKeys[dir]) {
+                if (keys[dir] !== this.recordedKeys[dir]) {
                     update = true;
                 }
             });
@@ -543,7 +540,7 @@ class GameScene extends Phaser.Scene {
     }
 
     parseObjectLayers() {
-        // The map has one object layer with enemies as stamped tiles, 
+        // The map has one object layer with enemies as stamped tiles,
         // each tile has properties containing info on what enemy it represents.
         this.map.getObjectLayer('enemies').objects.forEach(
             (enemy) => {
@@ -566,13 +563,12 @@ class GameScene extends Phaser.Scene {
                         });
                         break;
                     default:
-                        console.error('Unknown:', this.tileset.tileProperties[enemy.gid - 1]);
+                        console.error('Unknown:', this.tileset.tileProperties[enemy.gid - 1]); // eslint-disable-line no-console
                         break;
                 }
                 this.enemyGroup.add(enemyObject);
             }
         );
-
 
         // The map has an object layer with 'modifiers' that do 'stuff', see below
         this.map.getObjectLayer('modifiers').objects.forEach((modifier) => {
@@ -613,7 +609,7 @@ class GameScene extends Phaser.Scene {
                     };
                     break;
                 case 'room':
-                    // Adds a 'room' that is just info on bounds so that we can add sections below pipes 
+                    // Adds a 'room' that is just info on bounds so that we can add sections below pipes
                     // in an level just using one tilemap.
                     this.rooms.push({
                         x: modifier.x,
@@ -633,12 +629,12 @@ class GameScene extends Phaser.Scene {
             time: 150 * 1000,
             displayedTime: 255,
             hurry: false
-        }
+        };
         this.levelTimer.textObject.setScrollFactor(0, 0);
         this.score = {
             pts: 0,
             textObject: this.add.bitmapText(5 * 8, 16, 'font', '000000', 8)
-        }
+        };
         this.score.textObject.setScrollFactor(0, 0);
 
         if (this.attractMode) {
@@ -646,7 +642,6 @@ class GameScene extends Phaser.Scene {
             this.levelTimer.textObject.alpha = 0;
             this.score.textObject.alpha = 0;
         }
-
     }
 
     cleanUp() {

@@ -18,7 +18,7 @@ export default class Turtle extends Enemy {
         if (this.sliding) {
             this.scene.physics.world.collide(this, this.scene.groundLayer, this.scene.tileCollision);
             this.scene.enemyGroup.children.entries.forEach((enemy) => {
-                if (this != enemy) {
+                if (this !== enemy) {
                     this.scene.physics.world.overlap(this, enemy, this.slidekill);
                 }
             });
@@ -31,7 +31,6 @@ export default class Turtle extends Enemy {
             this.body.velocity.x = this.direction;
             this.flipX = this.direction < 0;
         }
-
     }
 
     slidekill(turtle, victim) {
@@ -51,13 +50,12 @@ export default class Turtle extends Enemy {
             return;
         }
 
-
         if (enemy.verticalHit(enemy, mario)) {
             // get points
             enemy.scene.updateScore(100);
             if (!enemy.sliding || (enemy.sliding && enemy.body.velocity.x === 0)) {
                 enemy.scene.sound.playAudioSprite('sfx', 'smb_kick');
-                //enemy.body.height = 16;
+                // enemy.body.height = 16;
                 enemy.direction = 150 * (mario.x < enemy.x ? 1 : -1);
 
                 enemy.body.velocity.x = enemy.direction;
@@ -78,11 +76,8 @@ export default class Turtle extends Enemy {
 
                 enemy.direction = 150;
                 enemy.body.velocity.x = 150;
-            } else {
-                enemy.hurtMario(enemy, mario);
             }
+            enemy.hurtMario(enemy, mario);
         }
-
-
     }
 }

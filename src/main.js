@@ -14,7 +14,9 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 800 },
+            gravity: {
+                y: 800
+            },
             debug: false
         }
     },
@@ -25,4 +27,4 @@ const config = {
     ]
 };
 
-const game = new Phaser.Game(config);
+const game = new Phaser.Game(config); // eslint-disable-line no-unused-vars
