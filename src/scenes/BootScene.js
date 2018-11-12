@@ -8,7 +8,7 @@ class BootScene extends Phaser.Scene {
     }
     preload() {
         const progress = this.add.graphics();
-       
+
         // Register a load progress event to show a load bar
         this.load.on('progress', (value) => {
             progress.clear();

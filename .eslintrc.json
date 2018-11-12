@@ -31,9 +31,8 @@
     "no-self-compare": "error",
     "yoda": ["error", "never"],
 
-    "array-bracket-spacing": ["error", "always"],
     "block-spacing": ["error", "always"],
-    "brace-style": ["error", "stroustrup", {
+    "brace-style": ["error", "1tbs", {
       "allowSingleLine": true
     }],
     "camelcase": "error",
@@ -54,14 +53,14 @@
     "lines-around-comment": ["error", {
       "beforeBlockComment": true,
       "afterBlockComment": false,
-      "beforeLineComment": true,
+      "beforeLineComment": false,
       "afterLineComment": false,
       "allowBlockStart": true,
       "allowBlockEnd": false,
       "allowObjectStart": true,
       "allowArrayStart": true
     }],
-    "space-before-function-paren": ["never", {
+    "space-before-function-paren": [0, {
       "anonymous": "always",
       "named": "always",
       "asyncArrow": "always"
@@ -79,7 +78,7 @@
     "no-whitespace-before-property": "error",
     "object-curly-newline": ["error", {
       "multiline": true,
-      "minProperties": 0
+      "minProperties": 1
     }],
     "one-var-declaration-per-line": ["error", "initializations"],
     "quote-props": ["error", "as-needed"],

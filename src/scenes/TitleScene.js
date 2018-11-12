@@ -29,8 +29,9 @@ class TitleScene extends Phaser.Scene {
 
         let sh = window.screen.availHeight;
         let sw = window.screen.availWidth;
-        let ch = 0;
-        let cw = 0;
+
+        // let ch = 0;
+        // let cw = 0;
         let multiplier = 1;
         if (sh / sw > 0.6) {
             // Portrait, fit width
@@ -42,16 +43,15 @@ class TitleScene extends Phaser.Scene {
         let el = document.getElementsByTagName('canvas')[0];
         el.style.width = 400 * multiplier + 'px';
         el.style.height = 240 * multiplier + 'px';
- 
 
         this.pressX = this.add.bitmapText(16 * 8 + 4, 8 * 16, 'font', 'PRESS X TO START', 8);
         this.blink = 1000;
 
         this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
-        this.input.on('pointerdown', function (pointer) {
+        this.input.on('pointerdown', () => {
             this.startGame();
-        }, this);
+        });
     }
 
     update(time, delta) {
@@ -83,7 +83,6 @@ class TitleScene extends Phaser.Scene {
         this.scene.bringToTop();
 
         this.registry.set('restartScene', false);
-
     }
 }
 
