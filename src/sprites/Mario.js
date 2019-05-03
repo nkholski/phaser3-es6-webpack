@@ -3,8 +3,8 @@ export default class Mario extends Phaser.GameObjects.Sprite {
         super(config.scene, config.x, config.y, config.key);
         config.scene.physics.world.enable(this);
         config.scene.add.existing(this);
-        this.acceleration = 600;
-        this.body.maxVelocity.x = 200;
+        this.acceleration = 400;
+        this.body.maxVelocity.x = 150;
         this.body.maxVelocity.y = 500;
         this.animSuffix = '';
         this.small();
