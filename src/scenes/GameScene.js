@@ -400,6 +400,12 @@ class GameScene extends Phaser.Scene {
                         sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles-16bit'));
                     }
                     break;
+                case 'moveNum':
+                    tile.index += 1;
+                    if (tile.index > 49) {
+                        tile.index = 48;
+                    }
+                    break;
                 default:
                     sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
                     break;
