@@ -38,6 +38,10 @@ class GameScene extends Phaser.Scene {
         // It's defined as objects in Tiled.
         this.rooms = [];
 
+        // Nummern fürs Codeschloss
+        this.numbers = [0, 0, 0];
+        this.numbersTarget = [1, 0, 0];
+
         // Running in 8-bit mode (16-bit mode is avaliable for the tiles, but I haven't done any work on sprites etc)
         this.eightBit = true;
 
@@ -46,6 +50,7 @@ class GameScene extends Phaser.Scene {
         this.music.play({
             loop: true
         });
+        this.sound.setVolume(0.02);
 
         // Add the map + bind the tileset
         this.map = this.make.tilemap({
@@ -83,8 +88,8 @@ class GameScene extends Phaser.Scene {
         // this.keys will contain all we need to control Mario.
         // Any key could just replace the default (like this.key.jump)
         this.keys = {
-            jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-            jump2: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
+            /*jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),*/
+            jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
             fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
@@ -331,6 +336,20 @@ class GameScene extends Phaser.Scene {
         );
     }
 
+    simpleCollision(sprite, tile) {
+        console.log(sprite, tile);
+        if (tile.properties.coin) {
+            sprite.scene.map.removeTileAt(tile.x, tile.y, true, true, this.groundLayer);
+            (() => new PowerUp({
+                scene: sprite.scene,
+                key: 'sprites16',
+                x: tile.x * 16 + 8,
+                y: tile.y * 16 - 8,
+                type: 'coin'
+            }))();
+        }
+    }
+
     tileCollision(sprite, tile) {
         if (sprite.type === 'turtle') {
             if (tile.y > Math.round(sprite.y / 16)) {
@@ -400,6 +419,20 @@ class GameScene extends Phaser.Scene {
                         sprite.scene.tileset.setImage(sprite.scene.sys.textures.get('tiles-16bit'));
                     }
                     break;
+                case 'moveNum':
+                    const codeIdx = tile.x - 51;
+                    sprite.scene.numbers[codeIdx] = (sprite.scene.numbers[codeIdx] + 1) % 2;
+                    tile.index += 1;
+                    if (tile.index > 49) {
+                        tile.index = 48;
+                    }
+                    sprite.scene.bounceTile.restart(tile);
+                    if (sprite.scene.numbers[0] === sprite.scene.numbersTarget[0] &&
+                        sprite.scene.numbers[1] === sprite.scene.numbersTarget[1] &&
+                        sprite.scene.numbers[2] === sprite.scene.numbersTarget[2]) {
+                        sprite.scene.lowerPipe(sprite.scene);
+                    }
+                    break;
                 default:
                     sprite.scene.sound.playAudioSprite('sfx', 'smb_bump');
                     break;
@@ -420,6 +453,16 @@ class GameScene extends Phaser.Scene {
         }
       )
     } */
+
+    lowerPipe(scene) {
+        const pipeElements = [[57, 3], [58, 3]];
+        pipeElements.forEach(tile => {
+            const orig = scene.map.getTileAt(tile[0], tile[1], true, this.groundLayer);
+            scene.map.removeTileAt(tile[0], tile[1], true, true, this.groundLayer);
+            scene.map.removeTileAt(tile[0], tile[1] + 1, true, true, this.groundLayer);
+            scene.map.putTileAt(orig, tile[0], tile[1] + 2, true, this.groundLayer);
+        });
+    }
 
     updateScore(score) {
         this.score.pts += score;
@@ -502,7 +545,7 @@ class GameScene extends Phaser.Scene {
     record(delta) {
         let update = false;
         let keys = {
-            jump: this.keys.jump.isDown || this.keys.jump2.isDown,
+            jump: this.keys.jump.isDown, // || this.keys.jump2.isDown,
             left: this.keys.left.isDown,
             right: this.keys.right.isDown,
             down: this.keys.down.isDown,
@@ -639,6 +682,7 @@ class GameScene extends Phaser.Scene {
 
         if (this.attractMode) {
             hud.alpha = 0;
+
             this.levelTimer.textObject.alpha = 0;
             this.score.textObject.alpha = 0;
         }

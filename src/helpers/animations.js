@@ -19,6 +19,15 @@ export default function makeAnimations(scene) {
         })
     };
     scene.anims.create(config);
+    config = {
+        key: 'counterTile',
+        frames: scene.anims.generateFrameNumbers('tiles', {
+            start: 47,
+            end: 48,
+            first: 47
+        })
+    };
+    scene.anims.create(config);
 
     // Mario animations: One without suffix, super after mushroom and fire after flower
     ['', 'Super', 'Fire'].forEach((suffix) => {

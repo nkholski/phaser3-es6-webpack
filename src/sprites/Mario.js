@@ -66,6 +66,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             this.scene.physics.world.collide(this, this.scene.groundLayer);
         }
 
+
         if (this.wasHurt > 0) {
             this.wasHurt -= delta;
             this.flashToggle = !this.flashToggle;
@@ -90,7 +91,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             left: keys.left.isDown || this.scene.touchControls.left,
             right: keys.right.isDown || this.scene.touchControls.right,
             down: keys.down.isDown || this.scene.touchControls.down,
-            jump: keys.jump.isDown || keys.jump2.isDown || this.scene.touchControls.jump,
+            jump: keys.jump.isDown || this.scene.touchControls.jump,
             fire: keys.fire.isDown
         };
 
@@ -247,6 +248,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
     large() {
         this.body.setSize(10, 22);
         this.body.offset.set(3, 10);
+        this.body.position.y -= 10;
     }
 
     die() {
