@@ -40,7 +40,7 @@ class GameScene extends Phaser.Scene {
 
         // Nummern fürs Codeschloss
         this.numbers = [0, 0, 0];
-        this.numbersTarget = [1, 0, 0];
+        this.numbersTarget = [8, 0, 6];
 
         // Running in 8-bit mode (16-bit mode is avaliable for the tiles, but I haven't done any work on sprites etc)
         this.eightBit = true;
@@ -421,9 +421,9 @@ class GameScene extends Phaser.Scene {
                     break;
                 case 'moveNum':
                     const codeIdx = tile.x - 51;
-                    sprite.scene.numbers[codeIdx] = (sprite.scene.numbers[codeIdx] + 1) % 2;
+                    sprite.scene.numbers[codeIdx] = (sprite.scene.numbers[codeIdx] + 1) % 10;
                     tile.index += 1;
-                    if (tile.index > 49) {
+                    if (tile.index > 57) {
                         tile.index = 48;
                     }
                     sprite.scene.bounceTile.restart(tile);
