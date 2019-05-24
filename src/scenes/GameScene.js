@@ -41,6 +41,8 @@ class GameScene extends Phaser.Scene {
         // Nummern fürs Codeschloss
         this.numbers = [0, 0, 0];
         this.numbersTarget = [8, 0, 6];
+        this.pipeElements = [[57, 3], [58, 3]];
+        this.pipeRaised = true;
 
         // Running in 8-bit mode (16-bit mode is avaliable for the tiles, but I haven't done any work on sprites etc)
         this.eightBit = true;
@@ -429,8 +431,14 @@ class GameScene extends Phaser.Scene {
                     sprite.scene.bounceTile.restart(tile);
                     if (sprite.scene.numbers[0] === sprite.scene.numbersTarget[0] &&
                         sprite.scene.numbers[1] === sprite.scene.numbersTarget[1] &&
-                        sprite.scene.numbers[2] === sprite.scene.numbersTarget[2]) {
+                        sprite.scene.numbers[2] === sprite.scene.numbersTarget[2] &&
+                        sprite.scene.pipeRaised) {
                         sprite.scene.lowerPipe(sprite.scene);
+                        sprite.scene.pipeRaised = false;
+                    }
+                    else if(!sprite.scene.pipeRaised) {
+                        sprite.scene.raisePipe(sprite.scene);
+                        sprite.scene.pipeRaised = true;
                     }
                     break;
                 default:
@@ -454,13 +462,25 @@ class GameScene extends Phaser.Scene {
       )
     } */
 
+    
+
     lowerPipe(scene) {
-        const pipeElements = [[57, 3], [58, 3]];
-        pipeElements.forEach(tile => {
+        //const pipeElements = [[57, 3], [58, 3]];
+        scene.pipeElements.forEach(tile => {
             const orig = scene.map.getTileAt(tile[0], tile[1], true, this.groundLayer);
             scene.map.removeTileAt(tile[0], tile[1], true, true, this.groundLayer);
             scene.map.removeTileAt(tile[0], tile[1] + 1, true, true, this.groundLayer);
             scene.map.putTileAt(orig, tile[0], tile[1] + 2, true, this.groundLayer);
+        });
+    }
+
+    raisePipe(scene) {
+        scene.pipeElements.forEach(tile => {
+            const origPipeTop = scene.map.getTileAt(tile[0], tile[1] + 2, true, this.groundLayer);
+            const origPipe = scene.map.getTileAt(tile[0], tile[1] + 3, true, this.groundLayer);
+            scene.map.putTileAt(origPipeTop, tile[0], tile[1], true, this.groundLayer);
+            scene.map.putTileAt(origPipe, tile[0], tile[1] + 1, true, this.groundLayer);
+            scene.map.putTileAt(origPipe, tile[0], tile[1] + 2, true, this.groundLayer); 
         });
     }
 
