@@ -92,7 +92,8 @@ export default class Mario extends Phaser.GameObjects.Sprite {
             right: keys.right.isDown || this.scene.touchControls.right,
             down: keys.down.isDown || this.scene.touchControls.down,
             jump: keys.jump.isDown || this.scene.touchControls.jump,
-            fire: keys.fire.isDown
+            fire: keys.fire.isDown,
+            safe: keys.safe.isDown
         };
 
         if (input.fire && this.animSuffix === 'Fire' && this.fireCoolDown < 0) {

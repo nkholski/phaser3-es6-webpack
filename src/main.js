@@ -2,6 +2,7 @@ import 'phaser';
 import BootScene from './scenes/BootScene';
 import GameScene from './scenes/GameScene';
 import TitleScene from './scenes/TitleScene';
+import YouAreSafe from './scenes/YouAreSafe';
 
 const config = {
     // For more settings see <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
@@ -11,6 +12,9 @@ const config = {
     parent: 'content',
     width: 400,
     height: 240,
+    dom: {
+        createContainer: true
+    },
     physics: {
         default: 'arcade',
         arcade: {
@@ -23,7 +27,8 @@ const config = {
     scene: [
         BootScene,
         TitleScene,
-        GameScene
+        GameScene,
+        YouAreSafe
     ]
 };
 
