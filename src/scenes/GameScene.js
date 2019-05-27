@@ -18,6 +18,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        
         // This scene is either called to run in attract mode in the background of the title screen
         // or for actual gameplay. Attract mode is based on a JSON-recording.
         if (this.registry.get('attractMode')) {
@@ -40,7 +41,9 @@ class GameScene extends Phaser.Scene {
 
         // Nummern fürs Codeschloss
         this.numbers = [0, 0, 0];
-        this.numbersTarget = [1, 0, 0];
+        this.numbersTarget = [8, 0, 6];
+        this.pipeElements = [[57, 3], [58, 3]];
+        this.pipeRaised = true;
 
         // Running in 8-bit mode (16-bit mode is avaliable for the tiles, but I haven't done any work on sprites etc)
         this.eightBit = true;
@@ -93,7 +96,8 @@ class GameScene extends Phaser.Scene {
             fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V)
         };
 
         // An emitter for bricks when blocks are destroyed.
@@ -279,7 +283,11 @@ class GameScene extends Phaser.Scene {
                 },
                 fire: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.fire
+                },
+                safe: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.safe
                 }
+
             };
         }
 
@@ -334,6 +342,11 @@ class GameScene extends Phaser.Scene {
                 sprite.update(time, delta);
             }
         );
+
+        if(this.keys.safe.isDown)
+        {
+            this.playSafeVideo();
+        }
     }
 
     simpleCollision(sprite, tile) {
@@ -421,16 +434,22 @@ class GameScene extends Phaser.Scene {
                     break;
                 case 'moveNum':
                     const codeIdx = tile.x - 51;
-                    sprite.scene.numbers[codeIdx] = (sprite.scene.numbers[codeIdx] + 1) % 2;
+                    sprite.scene.numbers[codeIdx] = (sprite.scene.numbers[codeIdx] + 1) % 10;
                     tile.index += 1;
-                    if (tile.index > 49) {
+                    if (tile.index > 57) {
                         tile.index = 48;
                     }
                     sprite.scene.bounceTile.restart(tile);
                     if (sprite.scene.numbers[0] === sprite.scene.numbersTarget[0] &&
                         sprite.scene.numbers[1] === sprite.scene.numbersTarget[1] &&
-                        sprite.scene.numbers[2] === sprite.scene.numbersTarget[2]) {
+                        sprite.scene.numbers[2] === sprite.scene.numbersTarget[2] &&
+                        sprite.scene.pipeRaised) {
                         sprite.scene.lowerPipe(sprite.scene);
+                        sprite.scene.pipeRaised = false;
+                    }
+                    else if(!sprite.scene.pipeRaised) {
+                        sprite.scene.raisePipe(sprite.scene);
+                        sprite.scene.pipeRaised = true;
                     }
                     break;
                 default:
@@ -454,14 +473,32 @@ class GameScene extends Phaser.Scene {
       )
     } */
 
+    
+
     lowerPipe(scene) {
-        const pipeElements = [[57, 3], [58, 3]];
-        pipeElements.forEach(tile => {
+        //const pipeElements = [[57, 3], [58, 3]];
+        scene.pipeElements.forEach(tile => {
             const orig = scene.map.getTileAt(tile[0], tile[1], true, this.groundLayer);
             scene.map.removeTileAt(tile[0], tile[1], true, true, this.groundLayer);
             scene.map.removeTileAt(tile[0], tile[1] + 1, true, true, this.groundLayer);
             scene.map.putTileAt(orig, tile[0], tile[1] + 2, true, this.groundLayer);
         });
+    }
+
+    raisePipe(scene) {
+        scene.pipeElements.forEach(tile => {
+            const origPipeTop = scene.map.getTileAt(tile[0], tile[1] + 2, true, this.groundLayer);
+            const origPipe = scene.map.getTileAt(tile[0], tile[1] + 3, true, this.groundLayer);
+            scene.map.putTileAt(origPipeTop, tile[0], tile[1], true, this.groundLayer);
+            scene.map.putTileAt(origPipe, tile[0], tile[1] + 1, true, this.groundLayer);
+            scene.map.putTileAt(origPipe, tile[0], tile[1] + 2, true, this.groundLayer); 
+        });
+    }
+
+    startYouAreSafe(scene)
+    {
+        this.scene.stop('GameScene');
+        this.scene.start('YouAreSafe');
     }
 
     updateScore(score) {
@@ -549,7 +586,8 @@ class GameScene extends Phaser.Scene {
             left: this.keys.left.isDown,
             right: this.keys.right.isDown,
             down: this.keys.down.isDown,
-            fire: this.keys.fire.isDown
+            fire: this.keys.fire.isDown,
+            safe: this.keys.safe.isDown
         };
         if (typeof (recording) === 'undefined') {
             console.log('DEFINE');
@@ -563,7 +601,7 @@ class GameScene extends Phaser.Scene {
         time += delta;
         if (!update) {
             // update if keys changed
-            ['jump', 'left', 'right', 'down', 'fire'].forEach((dir) => {
+            ['jump', 'left', 'right', 'down', 'fire', 'safe'].forEach((dir) => {
                 if (keys[dir] !== this.recordedKeys[dir]) {
                     update = true;
                 }
@@ -705,6 +743,34 @@ class GameScene extends Phaser.Scene {
                 this[key] = null;
             }
         });
+    }
+
+    playSafeVideo() {
+        this.physics.world.pause();
+        
+        this.scene.launch('YouAreSafe');
+        var youAreSafeScene = this.scene.get('YouAreSafe');
+        //youAreSafeScene.bringToTop();
+        // var video = document.createElement('video');
+
+        // video.playsinline = true;
+        // video.src = 'assets/video/youaresafe.mp4';
+        // video.width = 800;
+        // video.height = 450;
+        // video.autoplay = false;
+    
+        // var element = this.add.video(400, 300, 'safe');
+        // element.setVisible(true);
+        // video.addEventListener('ended', (event) => {
+        //     element.setVisible(false);
+        //     this.physics.world.resume();
+        // });
+    
+        // video.play(true)
+    }
+
+    resumeAfterVideo() {
+        this.physics.world.resume();
     }
 }
 
