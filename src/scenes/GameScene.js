@@ -495,12 +495,6 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    startYouAreSafe(scene)
-    {
-        this.scene.stop('GameScene');
-        this.scene.start('YouAreSafe');
-    }
-
     updateScore(score) {
         this.score.pts += score;
         this.score.textObject.setText(('' + this.score.pts).padStart(6, '0'));
@@ -750,23 +744,7 @@ class GameScene extends Phaser.Scene {
         
         this.scene.launch('YouAreSafe');
         var youAreSafeScene = this.scene.get('YouAreSafe');
-        //youAreSafeScene.bringToTop();
-        // var video = document.createElement('video');
 
-        // video.playsinline = true;
-        // video.src = 'assets/video/youaresafe.mp4';
-        // video.width = 800;
-        // video.height = 450;
-        // video.autoplay = false;
-    
-        // var element = this.add.video(400, 300, 'safe');
-        // element.setVisible(true);
-        // video.addEventListener('ended', (event) => {
-        //     element.setVisible(false);
-        //     this.physics.world.resume();
-        // });
-    
-        // video.play(true)
     }
 
     resumeAfterVideo() {
