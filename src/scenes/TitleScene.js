@@ -52,6 +52,11 @@ class TitleScene extends Phaser.Scene {
         this.input.on('pointerdown', () => {
             this.startGame();
         });
+
+        this.tileMusic = this.sound.add('mwctheme');
+        this.tileMusic.play({
+            loop: true
+        });
     }
 
     update(time, delta) {
@@ -64,25 +69,38 @@ class TitleScene extends Phaser.Scene {
             this.blink = 500;
         }
 
-        if (!this.registry.get('attractMode')) {}
+        if (!this.registry.get('attractMode')) {
+        }
+        else
+        {
+
+        }
         if (this.startKey.isDown) {
             this.startGame();
         }
     }
 
     startGame() {
+        
+        this.tileMusic.volume = 0;
+        console.log('Muting titleMusic')
+        //this.music.pause()
         this.scene.stop('GameScene');
         this.registry.set('attractMode', false);
         this.scene.start('GameScene');
     }
 
     restartScene() {
+        
+        this.tileMusic.volume = 0.2;
+        console.log('Unmuting titleMusic')
         //        this.attractMode.stop();
         this.scene.stop('GameScene');
         this.scene.launch('GameScene');
         this.scene.bringToTop();
 
         this.registry.set('restartScene', false);
+
     }
 }
 

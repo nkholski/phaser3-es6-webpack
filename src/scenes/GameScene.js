@@ -18,7 +18,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        
+        console.log("creating gamescene")
         // This scene is either called to run in attract mode in the background of the title screen
         // or for actual gameplay. Attract mode is based on a JSON-recording.
         if (this.registry.get('attractMode')) {
@@ -28,8 +28,14 @@ class GameScene extends Phaser.Scene {
                 time: 0
             };
         } else {
-            this.attractMode = null;
+            this.attractMode = null;        
         }
+        this.music = this.sound.add('albundy');
+        
+        this.music.play({
+            loop: true
+        });
+
 
         // Places to warp to (from pipes). These coordinates is used also to define current room (see below)
         this.destinations = {};
@@ -48,12 +54,7 @@ class GameScene extends Phaser.Scene {
         // Running in 8-bit mode (16-bit mode is avaliable for the tiles, but I haven't done any work on sprites etc)
         this.eightBit = true;
 
-        // Add and play the music
-        this.music = this.sound.add('overworld');
-        this.music.play({
-            loop: true
-        });
-        this.sound.setVolume(0.02);
+        this.sound.setVolume(0.2);
 
         // Add the map + bind the tileset
         this.map = this.make.tilemap({
@@ -495,12 +496,6 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    startYouAreSafe(scene)
-    {
-        this.scene.stop('GameScene');
-        this.scene.start('YouAreSafe');
-    }
-
     updateScore(score) {
         this.score.pts += score;
         this.score.textObject.setText(('' + this.score.pts).padStart(6, '0'));
@@ -750,23 +745,7 @@ class GameScene extends Phaser.Scene {
         
         this.scene.launch('YouAreSafe');
         var youAreSafeScene = this.scene.get('YouAreSafe');
-        //youAreSafeScene.bringToTop();
-        // var video = document.createElement('video');
 
-        // video.playsinline = true;
-        // video.src = 'assets/video/youaresafe.mp4';
-        // video.width = 800;
-        // video.height = 450;
-        // video.autoplay = false;
-    
-        // var element = this.add.video(400, 300, 'safe');
-        // element.setVisible(true);
-        // video.addEventListener('ended', (event) => {
-        //     element.setVisible(false);
-        //     this.physics.world.resume();
-        // });
-    
-        // video.play(true)
     }
 
     resumeAfterVideo() {
