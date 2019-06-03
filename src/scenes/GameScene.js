@@ -98,7 +98,8 @@ class GameScene extends Phaser.Scene {
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V)
+            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V),
+            married: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         };
 
         // An emitter for bricks when blocks are destroyed.
@@ -287,6 +288,9 @@ class GameScene extends Phaser.Scene {
                 },
                 safe: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.safe
+                }                ,
+                married: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.married
                 }
 
             };
@@ -347,6 +351,11 @@ class GameScene extends Phaser.Scene {
         if(this.keys.safe.isDown)
         {
             this.playSafeVideo();
+        }
+
+        if(this.keys.married.isDown)
+        {
+            this.playMarriedWithChildrenVideo();
         }
     }
 
@@ -582,7 +591,8 @@ class GameScene extends Phaser.Scene {
             right: this.keys.right.isDown,
             down: this.keys.down.isDown,
             fire: this.keys.fire.isDown,
-            safe: this.keys.safe.isDown
+            safe: this.keys.safe.isDown,
+            married: this.keys.married.isDown
         };
         if (typeof (recording) === 'undefined') {
             console.log('DEFINE');
@@ -596,7 +606,7 @@ class GameScene extends Phaser.Scene {
         time += delta;
         if (!update) {
             // update if keys changed
-            ['jump', 'left', 'right', 'down', 'fire', 'safe'].forEach((dir) => {
+            ['jump', 'left', 'right', 'down', 'fire', 'safe', 'married' ].forEach((dir) => {
                 if (keys[dir] !== this.recordedKeys[dir]) {
                     update = true;
                 }
@@ -745,6 +755,14 @@ class GameScene extends Phaser.Scene {
         
         this.scene.launch('YouAreSafe');
         var youAreSafeScene = this.scene.get('YouAreSafe');
+
+    }
+
+    playMarriedWithChildrenVideo() {
+        this.physics.world.pause();
+        
+        this.scene.launch('MarriedWithChildren');
+        var youAreSafeScene = this.scene.get('MarriedWithChildren');
 
     }
 
