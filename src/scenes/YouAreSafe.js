@@ -42,20 +42,23 @@ class YouAreSafe extends Phaser.Scene {
         this.element = document.body.prepend(this.video);
 
         this.video.addEventListener('ended', (event) => {
-            this.element.setVisible(false);
+            this.video.remove();
             this.scene.stop('YouAreSafe');
             this.gameScene.resume();
-        });
+        }, this);
 
         this.video.play(true);
 
         this.input.keyboard.on('keydown', event => {
+            if (event.key !== 'v') return;
+            this.video.remove();
             this.scene.stop('YouAreSafe');
             this.gameScene.resume();
         }, this);
     }
 
     update(time, delta) {
+
     }
 
 }
