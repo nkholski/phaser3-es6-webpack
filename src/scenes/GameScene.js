@@ -5,6 +5,8 @@ import PowerUp from '../sprites/PowerUp';
 import SMBTileSprite from '../sprites/SMBTileSprite';
 import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles.min.js';
 import Fire from '../sprites/Fire';
+import reduceArrays from '../helpers/reduceArrays';
+import Water from '../sprites/Water';
 
 class GameScene extends Phaser.Scene {
     constructor(test) {
@@ -18,7 +20,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        console.log("creating gamescene")
+        console.log("creating gamescene");
         // This scene is either called to run in attract mode in the background of the title screen
         // or for actual gameplay. Attract mode is based on a JSON-recording.
         if (this.registry.get('attractMode')) {
@@ -28,10 +30,10 @@ class GameScene extends Phaser.Scene {
                 time: 0
             };
         } else {
-            this.attractMode = null;        
+            this.attractMode = null;
         }
         this.music = this.sound.add('albundy');
-        
+
         this.music.play({
             loop: true
         });
@@ -86,19 +88,25 @@ class GameScene extends Phaser.Scene {
         // A group powerUps to update
         this.powerUps = this.add.group();
 
+
+        this.otherGroup = this.add.group();
+
         // Populate enemyGroup, powerUps, pipes and destinations from object layers
         this.parseObjectLayers();
 
         // this.keys will contain all we need to control Mario.
         // Any key could just replace the default (like this.key.jump)
         this.keys = {
-            /*jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),*/
             jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
             fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V)
+            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V),
+            text: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T),
+            lower: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L),
+            grow: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G),
+            end: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E)
         };
 
         // An emitter for bricks when blocks are destroyed.
@@ -138,7 +146,7 @@ class GameScene extends Phaser.Scene {
         this.finishLine = {
             x: worldEndAt,
             flag: this.add.sprite(worldEndAt + 8, 4 * 16),
-            active: false
+            active: true
         };
         this.finishLine.flag.play('flag');
 
@@ -172,7 +180,6 @@ class GameScene extends Phaser.Scene {
         dpad.on('pointerdown', (pointer) => {
             let x = dpad.x + dpad.width - pointer.x;
             let y = dpad.y + dpad.height - pointer.y;
-            console.log(x, y);
             if (y > 0 || Math.abs(x) > -y) {
                 if (x > 0) {
                     console.log('going left');
@@ -212,9 +219,10 @@ class GameScene extends Phaser.Scene {
         this.mario.setRoomBounds(this.rooms);
 
         // The camera should follow Mario
+        this.cameras.main.setBounds(0, 0, this.physics.world.bounds.width, this.sys.game.config.height);
         this.cameras.main.startFollow(this.mario);
-
         this.cameras.main.roundPixels = true;
+        this.cameras.main.setBackgroundColor(0x6888FF);
 
         this.fireballs = this.add.group({
             classType: Fire,
@@ -287,8 +295,19 @@ class GameScene extends Phaser.Scene {
                 },
                 safe: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.safe
+                },
+                text: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.text
+                },
+                lower: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.lower
+                },
+                grow: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.grow
+                },
+                end: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.end
                 }
-
             };
         }
 
@@ -337,6 +356,12 @@ class GameScene extends Phaser.Scene {
             }
         );
 
+        // Run the update method of all enemies
+        this.otherGroup.children.entries.forEach(
+            (sprite) => {
+                sprite.update(time, delta);
+            }
+        );
         // Run the update method of non-enemy sprites
         this.powerUps.children.entries.forEach(
             (sprite) => {
@@ -344,14 +369,25 @@ class GameScene extends Phaser.Scene {
             }
         );
 
-        if(this.keys.safe.isDown)
-        {
+        if (this.keys.safe.isDown) {
             this.playSafeVideo();
+        }
+
+        if (this.keys.text.isDown) {
+            this.displayTextBox('this is text\nthis is also text\n\nwe can write shit here\nthat\'s nice ...');
+        }
+        if (this.keys.grow.isDown) {
+            this.mario.resize(true);
+        }
+        if (this.keys.lower.isDown) {
+            this.lowerPipe(this);
+        }
+        if (this.keys.end.isDown) {
+            this.endGame(this);
         }
     }
 
     simpleCollision(sprite, tile) {
-        console.log(sprite, tile);
         if (tile.properties.coin) {
             sprite.scene.map.removeTileAt(tile.x, tile.y, true, true, this.groundLayer);
             (() => new PowerUp({
@@ -362,6 +398,7 @@ class GameScene extends Phaser.Scene {
                 type: 'coin'
             }))();
         }
+        return true;
     }
 
     tileCollision(sprite, tile) {
@@ -372,8 +409,9 @@ class GameScene extends Phaser.Scene {
             }
         } else if (sprite.type === 'mario') {
             // Mario is bending on a pipe that leads somewhere:
+            console.log(sprite.bending, tile.properties.pipe, tile.properties.dest);
             if (sprite.bending && tile.properties.pipe && tile.properties.dest) {
-                sprite.enterPipe(tile.properties.dest, tile.rotation);
+                sprite.enterPipe(parseInt(tile.properties.dest), tile.rotation);
             }
         }
 
@@ -474,7 +512,7 @@ class GameScene extends Phaser.Scene {
       )
     } */
 
-    
+
 
     lowerPipe(scene) {
         //const pipeElements = [[57, 3], [58, 3]];
@@ -492,7 +530,7 @@ class GameScene extends Phaser.Scene {
             const origPipe = scene.map.getTileAt(tile[0], tile[1] + 3, true, this.groundLayer);
             scene.map.putTileAt(origPipeTop, tile[0], tile[1], true, this.groundLayer);
             scene.map.putTileAt(origPipe, tile[0], tile[1] + 1, true, this.groundLayer);
-            scene.map.putTileAt(origPipe, tile[0], tile[1] + 2, true, this.groundLayer); 
+            scene.map.putTileAt(origPipe, tile[0], tile[1] + 2, true, this.groundLayer);
         });
     }
 
@@ -658,6 +696,7 @@ class GameScene extends Phaser.Scene {
                     type = 'powerUp';
                 }
             } else {
+                modifier.properties = reduceArrays(modifier.properties, 'name', 'value');
                 type = modifier.properties.type;
             }
 
@@ -676,6 +715,15 @@ class GameScene extends Phaser.Scene {
                     // Adds info on where to go from a pipe under the modifier
                     tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16);
                     tile.properties.dest = parseInt(modifier.properties.goto);
+                    break;
+                case 'water':
+                    tile.this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16);
+                    console.log(modifier);
+                    this.otherGroup.add(new Water({
+                        scene: this,
+                        x: modifier.x,
+                        y: modifier.y
+                    }));
                     break;
                 case 'dest':
                     // Adds a destination so that a pipe can find it
@@ -702,7 +750,7 @@ class GameScene extends Phaser.Scene {
         hud.setScrollFactor(0, 0);
         this.levelTimer = {
             textObject: this.add.bitmapText(36 * 8, 16, 'font', '255', 8),
-            time: 150 * 1000,
+            time: 150 * 10000,
             displayedTime: 255,
             hurry: false
         };
@@ -742,13 +790,25 @@ class GameScene extends Phaser.Scene {
 
     playSafeVideo() {
         this.physics.world.pause();
-        
+
         this.scene.launch('YouAreSafe');
         var youAreSafeScene = this.scene.get('YouAreSafe');
 
     }
 
-    resumeAfterVideo() {
+    displayTextBox(text) {
+        this.physics.world.pause();
+
+        this.scene.launch('TextBox', {'text': text});
+        var textBox = this.scene.get('TextBox');
+    }
+
+    endGame() {
+        this.physics.world.pause();
+        this.scene.launch('YourPrincessScene');
+    }
+
+    resume() {
         this.physics.world.resume();
     }
 }

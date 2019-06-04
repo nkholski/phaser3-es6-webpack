@@ -23,7 +23,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
 
         // Standard sprite is 16x16 pixels with a smaller body
         this.body.setSize(12, 12);
-        this.body.offset.set(10, 12);
+        this.body.offset.set(0, 4);
     }
 
     activated() {

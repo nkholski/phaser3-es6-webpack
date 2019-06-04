@@ -8,7 +8,7 @@ export default class Turtle extends Enemy {
         this.sliding = false;
         this.type = 'turtle';
         this.body.setSize(12, 12);
-        this.body.offset.set(2, 2);
+        this.body.offset.set(2, 10);
     }
 
     update() {
