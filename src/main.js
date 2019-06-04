@@ -4,6 +4,7 @@ import GameScene from './scenes/GameScene';
 import TitleScene from './scenes/TitleScene';
 import YouAreSafe from './scenes/YouAreSafe';
 import TextBox from './scenes/TextBox';
+import YourPrincessScene from './scenes/YourPrincessScene';
 
 const config = {
     // For more settings see <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
@@ -31,6 +32,7 @@ const config = {
         GameScene,
         YouAreSafe,
         TextBox,
+        YourPrincessScene
     ]
 };
 

@@ -27,7 +27,7 @@ class BootScene extends Phaser.Scene {
         this.load.image('background-clouds', 'assets/images/clouds.png'); // 16-bit later
 
         // Tilemap with a lot of objects and tile-properties tricks
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/super-mario.json');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/super-mario-new.json');
 
         // I load the tiles as a spritesheet so I can use it for both sprites and tiles,
         // Normally you should load it as an image.

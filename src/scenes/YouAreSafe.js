@@ -14,6 +14,7 @@ class YouAreSafe extends Phaser.Scene {
 
     }
     create() {
+        this.gameScene = this.scene.get('GameScene');
         let sh = window.screen.availHeight;
         let sw = window.screen.availWidth;
 
@@ -28,38 +29,30 @@ class YouAreSafe extends Phaser.Scene {
         console.log(multiplier);
 
         this.video = document.createElement('video');
-        //let video = document.getElementsByTagName('canvas')[0];
         this.video.playsinline = false;
         this.video.src = 'assets/video/youaresafe.mp4';
         this.video.id = 'youaresafe';
-        //this.video.width = 420;
-        //this.video.height = 240;
         this.video.autoplay = false;
+        this.video.style.width = '100%';
+        this.video.style.height = '100%';
+        this.video.style.position = 'absolute';
+        this.video.style.left = '0';
+        this.video.style.top = '0';
 
-        //this.video.style = 'width: 800px; height: 900px;'xv
-        //
-        //el.src = 'assets/video/youaresafe.mp4';
-        this.element = this.add.dom(0,0, this.video);
-        // this.element.parent.style.width='100%';
-        // this.element.parent.height='100%';
-        //this.element.setOrigin(0,0);
-
-        // this.element.parent.style.width = 90 + 'vh';
-        // this.element.parent.style.height = 352 + 'px';
-        // this.element.parent.style.left = ((sw - this.element.parent.offsetHeight) / 2) + 'px';
-        // this.element.parent.style.top = ((sh - this.element.parent.offsetWidth) / 2 ) + 'px';
+        this.element = document.body.prepend(this.video);
 
         this.video.addEventListener('ended', (event) => {
-
             this.element.setVisible(false);
-
             this.scene.stop('YouAreSafe');
-            var gameScene = this.scene.get('GameScene');
-            gameScene.resume();
+            this.gameScene.resume();
         });
 
         this.video.play(true);
-        // this.video.style.transform = '';
+
+        this.input.keyboard.on('keydown', event => {
+            this.scene.stop('YouAreSafe');
+            this.gameScene.resume();
+        }, this);
     }
 
     update(time, delta) {

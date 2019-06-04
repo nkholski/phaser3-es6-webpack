@@ -243,7 +243,7 @@ export default class Mario extends Phaser.GameObjects.Sprite {
 
     small() {
         this.body.setSize(10, 10);
-        this.body.offset.set(3, 14);
+        this.body.offset.set(0, 6);
     }
 
     large() {
