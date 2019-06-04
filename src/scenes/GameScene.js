@@ -103,7 +103,7 @@ class GameScene extends Phaser.Scene {
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
             safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V),
-            married: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
+            married: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
             text: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T),
             lower: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L),
             grow: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G),
@@ -296,7 +296,7 @@ class GameScene extends Phaser.Scene {
                 },
                 safe: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.safe
-                }                ,
+                },
                 married: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.married
                 },
