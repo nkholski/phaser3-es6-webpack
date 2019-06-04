@@ -11,7 +11,7 @@ class YouAreSafe extends Phaser.Scene {
         document.body.appendChild(this.style);
     }
     preload() {
-        
+
     }
     create() {
         let sh = window.screen.availHeight;
@@ -26,7 +26,7 @@ class YouAreSafe extends Phaser.Scene {
         }
         multiplier = Math.floor(multiplier);
         console.log(multiplier);
-        
+
         this.video = document.createElement('video');
         //let video = document.getElementsByTagName('canvas')[0];
         this.video.playsinline = false;
@@ -35,7 +35,7 @@ class YouAreSafe extends Phaser.Scene {
         //this.video.width = 420;
         //this.video.height = 240;
         this.video.autoplay = false;
-        
+
         //this.video.style = 'width: 800px; height: 900px;'xv
         //
         //el.src = 'assets/video/youaresafe.mp4';
@@ -43,21 +43,21 @@ class YouAreSafe extends Phaser.Scene {
         // this.element.parent.style.width='100%';
         // this.element.parent.height='100%';
         //this.element.setOrigin(0,0);
-        
+
         // this.element.parent.style.width = 90 + 'vh';
         // this.element.parent.style.height = 352 + 'px';
         // this.element.parent.style.left = ((sw - this.element.parent.offsetHeight) / 2) + 'px';
         // this.element.parent.style.top = ((sh - this.element.parent.offsetWidth) / 2 ) + 'px';
-        
+
         this.video.addEventListener('ended', (event) => {
-    
+
             this.element.setVisible(false);
-    
+
             this.scene.stop('YouAreSafe');
             var gameScene = this.scene.get('GameScene');
-            gameScene.resumeAfterVideo();
+            gameScene.resume();
         });
-        
+
         this.video.play(true);
         // this.video.style.transform = '';
     }

@@ -18,7 +18,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        console.log("creating gamescene")
+        console.log("creating gamescene");
         // This scene is either called to run in attract mode in the background of the title screen
         // or for actual gameplay. Attract mode is based on a JSON-recording.
         if (this.registry.get('attractMode')) {
@@ -28,10 +28,10 @@ class GameScene extends Phaser.Scene {
                 time: 0
             };
         } else {
-            this.attractMode = null;        
+            this.attractMode = null;
         }
         this.music = this.sound.add('albundy');
-        
+
         this.music.play({
             loop: true
         });
@@ -98,7 +98,8 @@ class GameScene extends Phaser.Scene {
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V)
+            safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V),
+            text: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T),
         };
 
         // An emitter for bricks when blocks are destroyed.
@@ -287,8 +288,10 @@ class GameScene extends Phaser.Scene {
                 },
                 safe: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.safe
-                }
-
+                },
+                text: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.text
+                },
             };
         }
 
@@ -347,6 +350,10 @@ class GameScene extends Phaser.Scene {
         if(this.keys.safe.isDown)
         {
             this.playSafeVideo();
+        }
+
+        if(this.keys.text.isDown) {
+            this.displayTextBox('this is text\nthis is also text\n\nwe can write shit here\nthat\'s nice ...');
         }
     }
 
@@ -474,7 +481,7 @@ class GameScene extends Phaser.Scene {
       )
     } */
 
-    
+
 
     lowerPipe(scene) {
         //const pipeElements = [[57, 3], [58, 3]];
@@ -492,7 +499,7 @@ class GameScene extends Phaser.Scene {
             const origPipe = scene.map.getTileAt(tile[0], tile[1] + 3, true, this.groundLayer);
             scene.map.putTileAt(origPipeTop, tile[0], tile[1], true, this.groundLayer);
             scene.map.putTileAt(origPipe, tile[0], tile[1] + 1, true, this.groundLayer);
-            scene.map.putTileAt(origPipe, tile[0], tile[1] + 2, true, this.groundLayer); 
+            scene.map.putTileAt(origPipe, tile[0], tile[1] + 2, true, this.groundLayer);
         });
     }
 
@@ -742,13 +749,20 @@ class GameScene extends Phaser.Scene {
 
     playSafeVideo() {
         this.physics.world.pause();
-        
+
         this.scene.launch('YouAreSafe');
         var youAreSafeScene = this.scene.get('YouAreSafe');
 
     }
 
-    resumeAfterVideo() {
+    displayTextBox(text) {
+        this.physics.world.pause();
+
+        this.scene.launch('TextBox', {'text': text});
+        var textBox = this.scene.get('TextBox');
+    }
+
+    resume() {
         this.physics.world.resume();
     }
 }
