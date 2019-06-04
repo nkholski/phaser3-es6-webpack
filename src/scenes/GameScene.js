@@ -92,7 +92,6 @@ class GameScene extends Phaser.Scene {
         // this.keys will contain all we need to control Mario.
         // Any key could just replace the default (like this.key.jump)
         this.keys = {
-            /*jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),*/
             jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
             fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
@@ -100,6 +99,8 @@ class GameScene extends Phaser.Scene {
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
             safe: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V),
             text: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T),
+            lower: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L),
+            grow: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G)
         };
 
         // An emitter for bricks when blocks are destroyed.
@@ -292,6 +293,12 @@ class GameScene extends Phaser.Scene {
                 text: {
                     isDown: this.attractMode.recording[this.attractMode.current].keys.text
                 },
+                lower: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.lower
+                },
+                grow: {
+                    isDown: this.attractMode.recording[this.attractMode.current].keys.grow
+                }
             };
         }
 
@@ -347,13 +354,18 @@ class GameScene extends Phaser.Scene {
             }
         );
 
-        if(this.keys.safe.isDown)
-        {
+        if (this.keys.safe.isDown) {
             this.playSafeVideo();
         }
 
-        if(this.keys.text.isDown) {
+        if (this.keys.text.isDown) {
             this.displayTextBox('this is text\nthis is also text\n\nwe can write shit here\nthat\'s nice ...');
+        }
+        if (this.keys.grow.isDown) {
+            this.mario.resize(true);
+        }
+        if (this.keys.lower.isDown) {
+            this.lowerPipe(this);
         }
     }
 
@@ -709,7 +721,7 @@ class GameScene extends Phaser.Scene {
         hud.setScrollFactor(0, 0);
         this.levelTimer = {
             textObject: this.add.bitmapText(36 * 8, 16, 'font', '255', 8),
-            time: 150 * 1000,
+            time: 150 * 10000,
             displayedTime: 255,
             hurry: false
         };
