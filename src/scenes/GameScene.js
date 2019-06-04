@@ -395,7 +395,7 @@ class GameScene extends Phaser.Scene {
         if (this.keys.grow.isDown) {
             this.mario.resize(true);
         }
-        if (this.keys.lower.isDown) {
+        if (this.keys.lower.isDown && this.pipeRaised) {
             this.lowerPipe(this);
         }
         if (this.keys.end.isDown) {

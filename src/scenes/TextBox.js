@@ -17,7 +17,7 @@ class TextBox extends Phaser.Scene {
 
     create(data) {
         this.gameScene = this.scene.get('GameScene');
-        this.text = data.text.toUpperCase();
+        this.text = data.text.replace('\n', '\n\n').toUpperCase();
 
         const graphics = this.add.graphics();
 
@@ -38,7 +38,7 @@ class TextBox extends Phaser.Scene {
             this.scene.get('GameScene').resume();
         }, this);
 
-        this.textObject = this.add.bitmapText(...this.getTextStart(size), 'font', this.text, 9  );
+        this.textObject = this.add.bitmapText(...this.getTextStart(size), 'font', this.text, 9);
     }
 
     update(time, delta) {
