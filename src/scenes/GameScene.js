@@ -38,6 +38,17 @@ class GameScene extends Phaser.Scene {
             loop: true
         });
 
+        this.messsages = [
+            {
+                x: 800,
+                message: 'What a horrible night\nto have a wedding!'
+            },
+            {
+                x: 1100,
+                message: 'Schlechtester Zeitpunkt\nfuer eine Unterbrechung?\n\n- Mitten ueberm Loch!'
+            }
+        ];
+        this.nextMsg = 0;
 
         // Places to warp to (from pipes). These coordinates is used also to define current room (see below)
         this.destinations = {};
@@ -319,6 +330,11 @@ class GameScene extends Phaser.Scene {
             this.removeFlag();
             this.physics.world.pause();
             return;
+        }
+
+
+        if (this.messsages.length > this.nextMsg && this.mario.x > this.messsages[this.nextMsg].x) {
+            this.displayTextBox(this.messsages[this.nextMsg++].message);
         }
 
         this.levelTimer.time -= delta * 2;
