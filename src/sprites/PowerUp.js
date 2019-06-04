@@ -12,8 +12,8 @@ export default class PowerUp extends Phaser.GameObjects.Sprite {
         this.body.velocity.x = this.direction;
 
         // Standard sprite is 16x16 pixels with a smaller body
-        this.body.setSize(12, 12);
-        // this.body.offset.set(2, 4);
+        this.body.setSize(10, 10);
+        this.body.offset.set(0, 5);
 
         if (this.type === 'mushroom' && this.scene.mario.animSuffix !== '') {
             this.type = 'flower';
