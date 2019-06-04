@@ -374,7 +374,7 @@ class GameScene extends Phaser.Scene {
         );
 
         if (this.keys.safe.isDown) {
-            this.playSafeVideo();
+            //this.playSafeVideo();
         }
 
         if(this.keys.married.isDown)
@@ -697,6 +697,8 @@ class GameScene extends Phaser.Scene {
         this.map.getObjectLayer('modifiers').objects.forEach((modifier) => {
             let tile, properties, type;
 
+            modifier.properties = reduceArrays(modifier.properties, 'name', 'value');
+
             // Get property stuff from the tile if present or just from the object layer directly
             if (typeof modifier.gid !== 'undefined') {
                 properties = this.tileset.tileProperties[modifier.gid - 1];
@@ -704,8 +706,10 @@ class GameScene extends Phaser.Scene {
                 if (properties.hasOwnProperty('powerUp')) {
                     type = 'powerUp';
                 }
+                if (typeof type === 'undefined' && modifier.properties.type) {
+                    type = modifier.properties.type;
+                }
             } else {
-                modifier.properties = reduceArrays(modifier.properties, 'name', 'value');
                 type = modifier.properties.type;
             }
 
@@ -726,9 +730,12 @@ class GameScene extends Phaser.Scene {
                     tile.properties.dest = parseInt(modifier.properties.goto);
                     break;
                 case 'water':
-                    tile.this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16);
-                    console.log(modifier);
+                    //tile = this.groundLayer.getTileAt(modifier.x / 16, modifier.y / 16, true);
+                    //console.log(tile);
+                    //tile.setCollision(true, true, true, true);
+                    //tile.setCollisionCallback((a, b) => console.log(a, b), this);
                     this.otherGroup.add(new Water({
+                        key: 'puddle',
                         scene: this,
                         x: modifier.x,
                         y: modifier.y

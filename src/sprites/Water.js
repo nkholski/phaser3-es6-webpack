@@ -2,31 +2,30 @@ export default class Water extends Phaser.GameObjects.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key);
         config.scene.physics.world.enable(this);
+        this.body.allowGravity = false;
         config.scene.add.existing(this);
         this.gameScene = config.scene;
         this.type = config.type;
-        this.played = false;
-
-        // Standard sprite is 16x16 pixels with a smaller body
-        this.body.setSize(10, 10);
-        this.body.offset.set(0, 5);
+        if (! this.scene.hasOwnProperty('played')) this.scene.played = false;
+        this.x += 16;
+        this.setSize(8, 8);
+        this.setVisible(false);
 
         //    this.scene.updateLoop.push(this);
         return this;
     }
-
     update() {
         if (this.alpha === 0) {
             this.destroy();
             return;
         }
-        console.log(this);
-        this.scene.physics.world.collide(this, this.scene.mario, this.waterCollison);
+
+        this.scene.physics.world.overlap(this, this.gameScene.mario, this.waterCollison, null, this);
     }
 
-    waterCollison(powerUp, mario) {
-        if (this.played) return;
+    waterCollison() {
+        if (this.scene.played) return;
+        this.scene.played = true;
         this.gameScene.playSafeVideo();
-        this.played = true;
     }
 }
