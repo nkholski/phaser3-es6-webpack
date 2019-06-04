@@ -1,11 +1,11 @@
-class YouAreSafe extends Phaser.Scene {
+class MarriedWithChildren extends Phaser.Scene {
     constructor(test) {
         super({
-            key: 'YouAreSafe'
+            key: 'MarriedWithChildren'
         });
 
         this.style = document.createElement('style');
-        this.style.innerHTML = '#youaresafe {' +
+        this.style.innerHTML = '#marriedwithchildren {' +
             'transform: inherit !important; position:fixed !important; width: 100vw; left: 0;' +
             '}';
         document.body.appendChild(this.style);
@@ -15,23 +15,11 @@ class YouAreSafe extends Phaser.Scene {
     }
     create() {
         this.gameScene = this.scene.get('GameScene');
-        let sh = window.screen.availHeight;
-        let sw = window.screen.availWidth;
-
-        let multiplier = 1;
-        if (sh / sw > 0.6) {
-            // Portrait, fit width
-            multiplier = sw / 400;
-        } else {
-            multiplier = sh / 240;
-        }
-        multiplier = Math.floor(multiplier);
-        console.log(multiplier);
 
         this.video = document.createElement('video');
         this.video.playsinline = false;
-        this.video.src = 'assets/video/youaresafe.mp4';
-        this.video.id = 'youaresafe';
+        this.video.src = 'assets/video/marriedwithchildren.mp4';
+        this.video.id = 'marriedwithchildren';
         this.video.autoplay = false;
         this.video.style.width = '100%';
         this.video.style.height = '100%';
@@ -43,7 +31,7 @@ class YouAreSafe extends Phaser.Scene {
 
         this.video.addEventListener('ended', (event) => {
             this.video.remove();
-            this.scene.stop('YouAreSafe');
+            this.scene.stop('MarriedWithChildren');
             this.gameScene.resume();
         }, this);
 
@@ -52,7 +40,7 @@ class YouAreSafe extends Phaser.Scene {
         this.input.keyboard.on('keydown', event => {
             if (event.key !== 'v') return;
             this.video.remove();
-            this.scene.stop('YouAreSafe');
+            this.scene.stop('MarriedWithChildren');
             this.gameScene.resume();
         }, this);
     }
@@ -63,4 +51,4 @@ class YouAreSafe extends Phaser.Scene {
 
 }
 
-export default YouAreSafe;
+export default MarriedWithChildren;

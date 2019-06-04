@@ -3,6 +3,7 @@ import BootScene from './scenes/BootScene';
 import GameScene from './scenes/GameScene';
 import TitleScene from './scenes/TitleScene';
 import YouAreSafe from './scenes/YouAreSafe';
+import MarriedWithChildren from './scenes/MarriedWithChildren';
 import TextBox from './scenes/TextBox';
 import YourPrincessScene from './scenes/YourPrincessScene';
 
@@ -31,6 +32,7 @@ const config = {
         TitleScene,
         GameScene,
         YouAreSafe,
+        MarriedWithChildren,
         TextBox,
         YourPrincessScene
     ]
